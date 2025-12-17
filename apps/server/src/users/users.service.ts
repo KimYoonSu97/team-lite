@@ -20,13 +20,37 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: { email: checkEmailDto.email },
     });
-    return { isAvailable: !user };
+    console.log('user');
+    console.log(user);
+    return { isAvailable: !user ? false : true };
   }
 
   async findOneByEmail(email: string) {
     return await this.prisma.user.findUnique({
       where: { email },
     });
+  }
+
+  async findOneByEmailWithoutPassword(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+    if (!user) {
+      return null;
+    }
+    const { password, ...result } = user;
+    return result;
+  }
+
+  async findOneById(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+    if (!user) {
+      return null;
+    }
+    const { password, ...result } = user;
+    return result;
   }
 
   findAll() {
