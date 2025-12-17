@@ -1,34 +1,45 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Request,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
-  @Post()
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':teamId')
+  async create(
+    @Body() createProjectDto: CreateProjectDto,
+    @Param('teamId') teamId: string,
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    return await this.projectsService.create(
+      createProjectDto,
+      teamId,
+      req.user.id,
+    );
+  }
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':teamId/list')
+  async findAll(@Param('teamId') teamId: string) {
+    return await this.projectsService.findAll(teamId);
   }
 
-  @Get()
-  findAll() {
-    return this.projectsService.findAll();
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':projectId')
+  async findOne(@Param('projectId') projectId: string) {
+    return await this.projectsService.findOne(projectId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    return this.projectsService.update(+id, updateProjectDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projectsService.remove(+id);
-  }
+  // async findAll(@Request() req: Request & { user: { id: string; email: string } }) {
 }
