@@ -1,0 +1,30 @@
+GET http://localhost:3000/users
+content-type: application/json
+
+
+### create user
+POST http://localhost:3000/users
+content-type: application/json
+
+{
+    "email": "test@test.com",
+    "nickname": "test",
+    "password": "test"
+}
+
+### check email
+POST http://localhost:3000/users/check-email
+content-type: application/json
+
+{
+    "email": "test@test.com"
+}
+
+### login
+POST http://localhost:3000/auth/login
+content-type: application/json
+
+{
+    "email": "test@test.com",
+    "password": "test"
+}
