@@ -1,7 +1,8 @@
-import { ICreateUserDto } from '@teamlite/types/src/user/user';
+import { ICreateUserDto } from '@teamlite/types';
 import {
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   Matches,
   MaxLength,
   MinLength,
@@ -26,5 +27,6 @@ export class CreateUserDto implements ICreateUserDto {
   })
   password: string;
 
+  @IsOptional()
   profileImage?: File;
 }

@@ -20,8 +20,6 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({
       where: { email: checkEmailDto.email },
     });
-    console.log('user');
-    console.log(user);
     return { isAvailable: !user ? false : true };
   }
 

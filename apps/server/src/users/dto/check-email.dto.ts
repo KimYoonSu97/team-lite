@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty } from 'class-validator';
-import { ICheckEmailDto } from '@teamlite/types/src/user/user';
+import { ICheckEmailDto } from '@teamlite/types';
 
 export class CheckEmailDto implements ICheckEmailDto {
   @IsEmail({}, { message: '이메일 형식이 올바르지 않습니다.' })

@@ -58,7 +58,7 @@ model team {
   updated_at   DateTime       @default(now()) @db.Timestamptz(6)
   deleted_at   DateTime?      @db.Timestamptz(6)
   project      project[]
-  user         user           @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  owner        user           @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   team_members team_members[]
 }
 

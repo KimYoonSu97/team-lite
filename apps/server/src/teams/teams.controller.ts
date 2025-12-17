@@ -6,37 +6,72 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
+  NotFoundException,
 } from '@nestjs/common';
 import { TeamsService } from './teams.service';
 import { CreateTeamDto } from './dto/create-team.dto';
-import { UpdateTeamDto } from './dto/update-team.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { AddMembersDto } from './dto/add-member.dto';
 
 @Controller('teams')
 export class TeamsController {
   constructor(private readonly teamsService: TeamsService) {}
 
+  @UseGuards(AuthGuard('jwt'))
   @Post()
-  create(@Body() createTeamDto: CreateTeamDto) {
-    return this.teamsService.create(createTeamDto);
+  async create(
+    @Body() createTeamDto: CreateTeamDto,
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    const newTeam = await this.teamsService.create(createTeamDto, req.user.id);
+
+    await this.teamsService.addMembers(newTeam.id, [
+      req.user.id,
+      ...createTeamDto.members,
+    ]);
+
+    return newTeam;
   }
 
-  @Get()
-  findAll() {
-    return this.teamsService.findAll();
+  @UseGuards(AuthGuard('jwt'))
+  @Post('add-members')
+  async addMembers(@Body() addMembersDto: AddMembersDto) {
+    await this.teamsService.addMembers(
+      addMembersDto.teamId,
+      addMembersDto.members,
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.teamsService.findOne(+id);
+  @UseGuards(AuthGuard('jwt'))
+  @Get('')
+  async findAll(
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    return await this.teamsService.findAll(req.user.id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
-    return this.teamsService.update(+id, updateTeamDto);
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':teamId')
+  async findOne(@Param('teamId') id: string) {
+    return await this.teamsService.findOne(id);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.teamsService.remove(+id);
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':teamId/members/:deleteUserId')
+  async findMembers(
+    @Param('teamId') teamId: string,
+    @Param('deleteUserId') deleteUserId: string,
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    const teamMember = await this.teamsService.getMemberIdInfo(
+      deleteUserId,
+      teamId,
+    );
+    if (!teamMember) {
+      throw new NotFoundException('팀 멤버를 찾을 수 없습니다.');
+    }
+    return await this.teamsService.deleteMemberFromTeam(teamMember.id);
   }
 }
