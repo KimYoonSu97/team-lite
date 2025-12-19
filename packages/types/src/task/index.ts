@@ -1,8 +1,8 @@
 export interface ICreateTaskDto {
-  projectId: string;
+  assigneeId: string;
+  content: string;
   title: string;
   description: string;
-  deadLine: Date;
-  priority: number;
-  assigneeId: string;
+  deadLine: string;
+  priority: string;
 }

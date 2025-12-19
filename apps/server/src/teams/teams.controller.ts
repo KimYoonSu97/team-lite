@@ -59,7 +59,13 @@ export class TeamsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get(':teamId/members/:deleteUserId')
+  @Get(':teamId/members')
+  async findTeamMembers(@Param('teamId') teamId: string) {
+    return await this.teamsService.findMembers(teamId);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':teamId/members/:deleteUserId')
   async findMembers(
     @Param('teamId') teamId: string,
     @Param('deleteUserId') deleteUserId: string,
