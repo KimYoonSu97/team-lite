@@ -4,6 +4,9 @@ import Home from "./pages/Home";
 import SignIn from "./pages/SignIn";
 import DefaultLayout from "./layouts/DefaultLayout";
 import { protectedLoader } from "./loaders/requiresAuth";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Teams from "./pages/Teams";
+import Projects from "./pages/Projects";
 
 const router = createBrowserRouter([
   {
@@ -11,19 +14,26 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
+    path: "signIn",
+    element: <SignIn />,
+  },
+  {
     path: "/",
     element: <DefaultLayout />,
     loader: protectedLoader,
     children: [
       { path: "/", element: <Home /> },
-      {
-        path: "signIn",
-        element: <SignIn />,
-      },
+      { path: "/teams/:teamId", element: <Teams /> },
+      { path: "/projects/:projectId", element: <Projects /> },
     ],
   },
 ]);
 
 export default function Router() {
-  return <RouterProvider router={router} />;
+  const queryClient = new QueryClient();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
 }

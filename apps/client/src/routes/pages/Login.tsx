@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import TextInput from "../../components/TextInput";
 import Button from "../../components/Button";
 import { publicAxios } from "../../api/axios";
@@ -6,7 +6,7 @@ import { useAuthStore } from "../../store/auth/useAuthStore";
 import { useNavigate } from "react-router";
 
 const Login = () => {
-  const { login, accessToken, user } = useAuthStore();
+  const { login } = useAuthStore();
   const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -21,6 +21,9 @@ const Login = () => {
       navigate("/");
     }
   };
+  const navigateToSignIn = () => {
+    navigate("/signIn");
+  };
   return (
     <div>
       <form name="login" method="post" onSubmit={onSubmit}>
@@ -28,6 +31,7 @@ const Login = () => {
         <TextInput placeholder="비밀번호" type="password" name="password" />
         <Button name="로그인하기" />
       </form>
+      <Button name="회원가입" onClick={navigateToSignIn} />
     </div>
   );
 };
