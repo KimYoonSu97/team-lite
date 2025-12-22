@@ -6,10 +6,14 @@ import { authAxios } from "../../api/axios";
 import TextInput from "../../components/TextInput";
 import { useNavigate } from "react-router";
 import type { ITeam } from "@teamlite/types";
+import Modal from "../../components/Modal";
+import { useState } from "react";
+import { createPortal } from "react-dom";
 
 const Home = () => {
   const { user } = useAuthStore();
   const navigation = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const teamList = useQuery({
     queryKey: ["teamList"],
     queryFn: async () => {
@@ -22,6 +26,23 @@ const Home = () => {
   return (
     <div>
       <div>반갑습니다. {user?.nickname}님</div>
+      <Button
+        name="add team modal open"
+        onClick={() => {
+          setIsModalOpen(true);
+        }}
+      />
+      {isModalOpen &&
+        createPortal(
+          <Modal
+            onClose={() => {
+              setIsModalOpen(false);
+            }}
+            item={<AddTeamModal onClose={() => setIsModalOpen(false)} />}
+          />,
+          document.getElementById("modal")!
+        )}
+
       <S.Container>
         <p>task list</p>
         <div></div>
@@ -58,6 +79,19 @@ const Home = () => {
 
 export default Home;
 
+const AddTeamModal = ({ onClose }: { onClose: () => void }) => {
+  return (
+    <S.AddTeamModalContainer onClick={(e) => e.stopPropagation()}>
+      <p>add team modal</p>
+      <div>dfnlaksdnfklnsk</div>
+      <TextInput name="name" />
+      <TextInput name="description" />
+      <button onClick={() => {}}>add</button>
+      <button onClick={onClose}>close</button>
+    </S.AddTeamModalContainer>
+  );
+};
+
 const S = {
   Container: styled.div`
     padding: 10px;
@@ -66,6 +100,11 @@ const S = {
   TeamCard: styled.div`
     padding: 10px;
     background-color: aqua;
+    border-radius: 10px;
+  `,
+  AddTeamModalContainer: styled.div`
+    padding: 10px;
+    background-color: white;
     border-radius: 10px;
   `,
 };

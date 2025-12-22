@@ -23,6 +23,13 @@ const Teams = () => {
       return res.data;
     },
   });
+  const teamMemberList = useQuery({
+    queryKey: ["teamDetail", teamId, "memberList"],
+    queryFn: async () => {
+      const res = await authAxios(`/teams/${teamId}/members`);
+      return res.data;
+    },
+  });
 
   return (
     <div>
@@ -39,6 +46,18 @@ const Teams = () => {
                 }}
               >
                 {project.title}
+              </S.Box>
+            );
+          })}
+        </div>
+      </S.Container>
+      <S.Container>
+        <p>멤버 리스트</p>
+        <div>
+          {teamMemberList.data?.map((member: any) => {
+            return (
+              <S.Box key={member.id} onClick={() => {}}>
+                {member.nickname}
               </S.Box>
             );
           })}
