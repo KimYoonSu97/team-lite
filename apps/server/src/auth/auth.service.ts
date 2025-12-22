@@ -4,6 +4,7 @@ import { LoginDto } from './dto/login.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { IUser } from '@teamlite/types';
 
 @Injectable()
 export class AuthService {
@@ -15,18 +16,31 @@ export class AuthService {
   async validateUser(
     email: string,
     password: string,
-  ): Promise<{ email: string; id: string } | null> {
+  ): Promise<Omit<IUser, 'password'> | null> {
     const user = await this.usersService.findOneByEmail(email);
+
     if (user && (await bcrypt.compare(password, user.password))) {
-      return { email: user.email, id: user.id };
+      const { password, ...result } = user;
+      return {
+        id: result.id,
+        email: result.email,
+        nickname: result.nickname,
+        description: result.description,
+        profileImage: result.profile_image,
+        isUse: result.is_use,
+        createdAt: result.created_at,
+        updatedAt: result.updated_at,
+        deletedAt: result.deleted_at,
+      };
     }
     return null;
   }
 
-  login(user: { email: string; id: string }) {
+  login(user: Omit<IUser, 'password'>) {
     const payload = { username: user.email, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      user,
+      accessToken: this.jwtService.sign(payload),
     };
   }
 }

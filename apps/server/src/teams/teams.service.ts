@@ -50,7 +50,13 @@ export class TeamsService {
       where: { id: teamId },
       include: { owner: true },
     });
-    return team;
+
+    if (!team) {
+      return null;
+    }
+
+    const { password, ...ownerWithoutPassword } = team.owner;
+    return { ...team, owner: ownerWithoutPassword };
   }
 
   async findMembers(teamId: string) {

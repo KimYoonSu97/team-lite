@@ -1,4 +1,4 @@
-import { CommonData } from "../common";
+import type { CommonData } from "../common";
 
 export interface ICreateUserDto {
   email: string;
