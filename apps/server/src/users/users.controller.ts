@@ -8,19 +8,25 @@ import {
   UseGuards,
   Request,
   Query,
+  HttpException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CheckEmailDto } from './dto/check-email.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { UserResponseDto } from 'src/common/dto/userResponse.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const newUser = await this.usersService.create(createUserDto);
+    return plainToInstance(UserResponseDto, newUser, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @Post('check-email')
@@ -30,28 +36,27 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
-  getMe(@Request() req: Request & { user: { id: string; email: string } }) {
-    return this.usersService.findOneById(req.user.id);
+  async getMe(
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    const user = await this.usersService.findOneById(req.user.id);
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async getUser(@Query('email') email: string) {
-    return await this.usersService.findOneByEmailWithoutPassword(email);
-  }
-
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    const user = await this.usersService.findOneByEmail(email);
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    return plainToInstance(UserResponseDto, user, {
+      excludeExtraneousValues: true,
+    });
   }
 }

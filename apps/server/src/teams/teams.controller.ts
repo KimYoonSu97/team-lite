@@ -14,6 +14,9 @@ import { TeamsService } from './teams.service';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AddMembersDto } from './dto/add-member.dto';
+import { TeamResponseDto } from './dto/TeamResponse.dto';
+import { UserResponseDto } from 'src/common/dto/userResponse.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Controller('teams')
 export class TeamsController {
@@ -26,22 +29,18 @@ export class TeamsController {
     @Request() req: Request & { user: { id: string; email: string } },
   ) {
     const newTeam = await this.teamsService.create(createTeamDto, req.user.id);
-
-    await this.teamsService.addMembers(newTeam.id, [
-      req.user.id,
-      ...createTeamDto.members,
-    ]);
-
+    await this.teamsService.addMembers(newTeam.id, [req.user.id]);
     return newTeam;
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post('add-members')
   async addMembers(@Body() addMembersDto: AddMembersDto) {
-    await this.teamsService.addMembers(
+    const res = await this.teamsService.addMembers(
       addMembersDto.teamId,
       addMembersDto.members,
     );
+    return res;
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -49,19 +48,41 @@ export class TeamsController {
   async findAll(
     @Request() req: Request & { user: { id: string; email: string } },
   ) {
-    return await this.teamsService.findAll(req.user.id);
+    const res = await this.teamsService.findAll(req.user.id);
+    if (!res) {
+      throw new NotFoundException('팀을 찾을 수 없습니다.');
+    }
+    return res.map((team) =>
+      plainToInstance(TeamResponseDto, team.team, {
+        excludeExtraneousValues: true,
+      }),
+    );
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':teamId')
   async findOne(@Param('teamId') id: string) {
-    return await this.teamsService.findOne(id);
+    const res = await this.teamsService.findOne(id);
+    if (!res) {
+      throw new NotFoundException('팀을 찾을 수 없습니다.');
+    }
+    return plainToInstance(TeamResponseDto, res, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':teamId/members')
   async findTeamMembers(@Param('teamId') teamId: string) {
-    return await this.teamsService.findMembers(teamId);
+    const res = await this.teamsService.findMembers(teamId);
+    if (!res) {
+      throw new NotFoundException('팀 멤버를 찾을 수 없습니다.');
+    }
+    return res.map((member) =>
+      plainToInstance(UserResponseDto, member.user, {
+        excludeExtraneousValues: true,
+      }),
+    );
   }
 
   @UseGuards(AuthGuard('jwt'))

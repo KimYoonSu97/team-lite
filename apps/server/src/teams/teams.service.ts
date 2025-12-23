@@ -10,39 +10,36 @@ export class TeamsService {
       data: {
         name: createTeamDto.name,
         description: createTeamDto.description,
-        owner_id: ownerId,
+        ownerId,
       },
     });
     return newTeam;
   }
 
   async addMembers(teamId: string, members: string[]) {
-    await this.prisma.team_members.createMany({
+    const res = await this.prisma.team_members.createMany({
       data: members.map((member) => ({
-        team_id: teamId,
-        user_id: member,
+        teamId,
+        userId: member,
         role: 'MEMBER',
       })),
     });
+    return res;
   }
 
   async findAll(userId: string) {
     const teams = await this.prisma.team_members.findMany({
-      where: { user_id: userId },
-      include: { team: true },
+      where: { userId },
+      include: {
+        team: {
+          include: {
+            owner: true,
+            project: true,
+          },
+        },
+      },
     });
-    console.log(teams);
-    return teams
-      ? teams.map((team) => {
-          return {
-            id: team.team.id,
-            name: team.team.name,
-            imageUrl: team.team.image_url,
-            description: team.team.description,
-            profileImage: team.team.image_url,
-          };
-        })
-      : [];
+    return teams;
   }
 
   async findOne(teamId: string) {
@@ -51,29 +48,17 @@ export class TeamsService {
       include: { owner: true },
     });
 
-    if (!team) {
-      return null;
-    }
-
-    const { password, ...ownerWithoutPassword } = team.owner;
-    return { ...team, owner: ownerWithoutPassword };
+    return team;
   }
 
   async findMembers(teamId: string) {
     const members = await this.prisma.team_members.findMany({
-      where: { team_id: teamId },
-      include: { user: true },
+      where: { teamId },
+      include: {
+        user: true,
+      },
     });
-    return members
-      ? members.map((member) => {
-          return {
-            id: member.user.id,
-            email: member.user.email,
-            nickname: member.user.nickname,
-            profileImage: member.user.profile_image,
-          };
-        })
-      : [];
+    return members;
   }
 
   async deleteMemberFromTeam(id: string) {
@@ -86,8 +71,8 @@ export class TeamsService {
   async getMemberIdInfo(deleteUserId: string, teamId: string) {
     return await this.prisma.team_members.findFirst({
       where: {
-        team_id: teamId,
-        user_id: deleteUserId,
+        teamId,
+        userId: deleteUserId,
       },
     });
   }

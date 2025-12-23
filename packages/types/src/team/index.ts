@@ -1,4 +1,5 @@
 import type { CommonData } from "../common";
+import { IUser } from "../user";
 
 export interface ICreateTeamDto {
   name: string;
@@ -13,9 +14,7 @@ export interface IAddMembersDto {
 }
 
 export interface ITeam extends CommonData {
-  id: string;
   name: string;
   profileImage: string | null;
-  ownerId: string;
-  description: string;
+  owner: IUser;
 }

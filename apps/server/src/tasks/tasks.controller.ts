@@ -12,6 +12,8 @@ import {
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { plainToInstance } from 'class-transformer';
+import { TaskResponseDto } from './dto/taskResponse.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -35,18 +37,24 @@ export class TasksController {
   @UseGuards(AuthGuard('jwt'))
   @Get(':projectId')
   async findProjectTasks(@Param() param: { projectId: string }) {
-    return await this.tasksService.findAll(param.projectId);
+    const res = await this.tasksService.findAll(param.projectId);
+    return res.map((task) => {
+      return plainToInstance(TaskResponseDto, task, {
+        excludeExtraneousValues: true,
+      });
+    });
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Patch(':taskId')
-  updateTask(@Param() id: string) {}
-
-  @UseGuards(AuthGuard('jwt'))
-  @Patch(':taskId/done')
-  updateTaskStatus(@Param() id: string) {}
-
-  @UseGuards(AuthGuard('jwt'))
-  @Delete(':taskId')
-  deleteTask(@Param() id: string) {}
+  @Get('')
+  async findMyTasks(
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    const res = await this.tasksService.findMyTasks(req.user.id);
+    return res.map((task) => {
+      return plainToInstance(TaskResponseDto, task, {
+        excludeExtraneousValues: true,
+      });
+    });
+  }
 }

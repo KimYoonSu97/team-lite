@@ -12,9 +12,9 @@ export class TasksService {
   ) {
     await this.prismaService.task.create({
       data: {
-        project_id: projectId,
-        owner_id: ownerId,
-        assignee_id: createTaskDto.assigneeId,
+        projectId,
+        ownerId,
+        assigneeId: createTaskDto.assigneeId,
         title: createTaskDto.title,
         content: createTaskDto.content,
         description: createTaskDto.description,
@@ -28,23 +28,23 @@ export class TasksService {
 
   async findAll(projectId: string) {
     return await this.prismaService.task.findMany({
-      where: { project_id: projectId },
+      where: { projectId },
       include: {
-        user_task_assignee_idTouser: true,
-        user_task_owner_idTouser: true,
+        assignee: true,
+        owner: true,
+        project: true,
       },
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
-  }
-
-  updateOne(id: number, updateTaskDto: any) {
-    return `This action updates a #${id} task`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async findMyTasks(userId: string) {
+    const myTaskList = await this.prismaService.task.findMany({
+      where: { assigneeId: userId },
+      include: {
+        owner: true,
+        project: true,
+      },
+    });
+    return myTaskList;
   }
 }

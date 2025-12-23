@@ -4,7 +4,7 @@ export interface ICreateUserDto {
   email: string;
   nickname: string;
   password: string;
-  profileImage?: File;
+  profileImage?: string | null;
 }
 
 export interface IUser extends CommonData {
@@ -16,4 +16,9 @@ export interface IUser extends CommonData {
 
 export interface ICheckEmailDto {
   email: string;
+}
+
+export interface ILoginResponseDto {
+  accessToken: string;
+  user: IUser;
 }

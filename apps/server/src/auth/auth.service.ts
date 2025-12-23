@@ -13,33 +13,18 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(
-    email: string,
-    password: string,
-  ): Promise<Omit<IUser, 'password'> | null> {
+  async validateUser(email: string, password: string) {
     const user = await this.usersService.findOneByEmail(email);
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const { password, ...result } = user;
-      return {
-        id: result.id,
-        email: result.email,
-        nickname: result.nickname,
-        description: result.description,
-        profileImage: result.profile_image,
-        isUse: result.is_use,
-        createdAt: result.created_at,
-        updatedAt: result.updated_at,
-        deletedAt: result.deleted_at,
-      };
+      return user;
     }
     return null;
   }
 
-  login(user: Omit<IUser, 'password'>) {
+  getAccessToken(user) {
     const payload = { username: user.email, sub: user.id };
     return {
-      user,
       accessToken: this.jwtService.sign(payload),
     };
   }

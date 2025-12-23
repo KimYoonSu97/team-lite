@@ -14,22 +14,29 @@ export class ProjectsService {
       data: {
         title: createProjectDto.name,
         description: createProjectDto.description,
-        team_id: teamId,
-        owner_id: userId,
+        teamId,
+        ownerId: userId,
       },
     });
-    // return 'This action adds a new project';
   }
 
   async findAll(teamId: string) {
     return await this.prisma.project.findMany({
-      where: { team_id: teamId },
+      where: { teamId },
+      include: {
+        team: true,
+        owner: true,
+      },
     });
   }
 
   async findOne(projectId: string) {
     return await this.prisma.project.findUnique({
       where: { id: projectId },
+      include: {
+        team: true,
+        owner: true,
+      },
     });
   }
 }

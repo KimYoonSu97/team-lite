@@ -7,13 +7,16 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
+
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const newUser = await this.prisma.user.create({
-      data: { ...createUserDto, password: hashedPassword },
+      data: {
+        ...createUserDto,
+        password: hashedPassword,
+      },
     });
-    const { password, ...result } = newUser;
-    return result;
+    return newUser;
   }
 
   async checkEmail(checkEmailDto: CheckEmailDto) {
@@ -25,46 +28,16 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string) {
-    return await this.prisma.user.findUnique({
+    const res = await this.prisma.user.findUnique({
       where: { email },
     });
-  }
-
-  async findOneByEmailWithoutPassword(email: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
-    });
-    if (!user) {
-      return null;
-    }
-    const { password, ...result } = user;
-    return result;
+    return res;
   }
 
   async findOneById(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
-    if (!user) {
-      return null;
-    }
-    const { password, ...result } = user;
-    return result;
-  }
-
-  findAll() {
-    return `This action returns all users`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return user;
   }
 }

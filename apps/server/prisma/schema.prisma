@@ -10,71 +10,71 @@ datasource db {
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model project {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  team_id       String    @db.Uuid
-  owner_id      String    @db.Uuid
+  teamId       String    @map("team_id") @db.Uuid
+  ownerId      String    @map("owner_id") @db.Uuid 
   title         String
-  profile_image String?
+  profileImage String?   @map("profile_image")
   status        String?   @default("ACTIVE")
   description   String?
-  is_use        Boolean   @default(true)
-  created_at    DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime  @default(now()) @db.Timestamptz(6)
-  deleted_at    DateTime? @db.Timestamptz(6)
-  user          user      @relation(fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  team          team      @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  task          task[]
+  isUse        Boolean        @default(true) @map("is_use")
+  createdAt    DateTime       @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt    DateTime       @default(now()) @db.Timestamptz(6) @map("updated_at")
+  deletedAt    DateTime?      @db.Timestamptz(6) @map("deleted_at")
+  owner        user      @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  team         team      @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  task         task[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model task {
   id                          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  project_id                  String    @db.Uuid
-  owner_id                    String    @db.Uuid
-  assignee_id                 String    @db.Uuid
+  projectId                  String    @db.Uuid @map("project_id")
+  ownerId                    String    @db.Uuid @map("owner_id")
+  assigneeId                 String    @db.Uuid @map("assignee_id")
   title                       String
   content                     String
   status                      String?   @default("ACTIVE")
-  priority                    Decimal?  @default(5) @db.Decimal
+  priority                    String  @default("5") 
   duedate                     DateTime  @db.Timestamptz(6)
   description                 String?
-  is_use                      Boolean   @default(true)
-  created_at                  DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at                  DateTime  @default(now()) @db.Timestamptz(6)
-  deleted_at                  DateTime? @db.Timestamptz(6)
-  user_task_assignee_idTouser user      @relation("task_assignee_idTouser", fields: [assignee_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user_task_owner_idTouser    user      @relation("task_owner_idTouser", fields: [owner_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  project                     project   @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  isUse        Boolean        @default(true) @map("is_use")
+  createdAt    DateTime       @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt    DateTime       @default(now()) @db.Timestamptz(6) @map("updated_at")
+  deletedAt    DateTime?      @db.Timestamptz(6) @map("deleted_at")
+  assignee user      @relation("task_assignee_idTouser", fields: [assigneeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  owner    user      @relation("task_owner_idTouser", fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  project                     project   @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model team {
   id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String
-  image_url    String?
-  owner_id     String         @db.Uuid
+  profileImage    String? @map("image_url")
+  ownerId     String         @db.Uuid @map("owner_id")
   description  String?
-  is_use       Boolean        @default(true)
-  created_at   DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime       @default(now()) @db.Timestamptz(6)
-  deleted_at   DateTime?      @db.Timestamptz(6)
+  isUse        Boolean        @default(true) @map("is_use")
+  createdAt    DateTime       @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt    DateTime       @default(now()) @db.Timestamptz(6) @map("updated_at")
+  deletedAt    DateTime?      @db.Timestamptz(6) @map("deleted_at")
   project      project[]
-  owner        user           @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  team_members team_members[]
+  owner        user           @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teamMembers team_members[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model team_members {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  team_id     String    @db.Uuid
-  user_id     String    @db.Uuid
+  teamId     String    @db.Uuid @map("team_id")
+  userId     String    @db.Uuid @map("user_id")
   role        String?   @default("MEMBER")
   description String?
-  is_use      Boolean   @default(true)
-  created_at  DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime  @default(now()) @db.Timestamptz(6)
-  deleted_at  DateTime? @db.Timestamptz(6)
-  team        team      @relation(fields: [team_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user        user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  isUse       Boolean   @default(true) @map("is_use")
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt   DateTime  @default(now()) @db.Timestamptz(6) @map("updated_at")
+  deletedAt   DateTime? @db.Timestamptz(6) @map("deleted_at")
+  team        team      @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user        user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -83,15 +83,15 @@ model user {
   email                       String         @unique
   password                    String
   nickname                    String
-  profile_image               String?
+  profileImage               String?        @map("profile_image")
   description                 String?
-  is_use                      Boolean        @default(true)
-  created_at                  DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at                  DateTime       @default(now()) @db.Timestamptz(6)
-  deleted_at                  DateTime?      @db.Timestamptz(6)
+  isUse                      Boolean        @default(true) @map("is_use")
+  createdAt                  DateTime       @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt                  DateTime       @default(now()) @db.Timestamptz(6) @map("updated_at")
+  deletedAt                  DateTime?      @db.Timestamptz(6) @map("deleted_at")
   project                     project[]
-  task_task_assignee_idTouser task[]         @relation("task_assignee_idTouser")
-  task_task_owner_idTouser    task[]         @relation("task_owner_idTouser")
+  taskAssigneeIdTouser task[]         @relation("task_assignee_idTouser")
+  taskOwnerIdTouser    task[]         @relation("task_owner_idTouser")
   team                        team[]
-  team_members                team_members[]
+  teamMembers                team_members[]
 }

@@ -28,5 +28,5 @@ export class CreateUserDto implements ICreateUserDto {
   password: string;
 
   @IsOptional()
-  profileImage?: File;
+  profileImage?: string | null;
 }
