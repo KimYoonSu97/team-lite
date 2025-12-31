@@ -1,5 +1,5 @@
 import type { CommonData } from "../common";
-import { IUser } from "../user";
+import type { IUser } from "../user";
 
 export interface ICreateTeamDto {
   name: string;

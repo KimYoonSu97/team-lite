@@ -49,6 +49,7 @@ export class TeamsController {
     @Request() req: Request & { user: { id: string; email: string } },
   ) {
     const res = await this.teamsService.findAll(req.user.id);
+
     if (!res) {
       throw new NotFoundException('팀을 찾을 수 없습니다.');
     }

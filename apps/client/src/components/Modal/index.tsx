@@ -8,7 +8,11 @@ const index = ({
   onClose: () => void;
   item: React.ReactNode;
 }) => {
-  return <S.Container onClick={onClose}>{item}</S.Container>;
+  return (
+    <S.Container onClick={onClose}>
+      <div onClick={(e) => e.stopPropagation()}>{item}</div>
+    </S.Container>
+  );
 };
 
 export default index;

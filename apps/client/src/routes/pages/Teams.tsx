@@ -1,39 +1,48 @@
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { authAxios } from "../../api/axios";
 import styled from "styled-components";
+import useModal from "../../hooks/useModal";
+import type { IUser } from "@teamlite/types";
+import { useState } from "react";
+import TextInput from "../../components/TextInput";
+import { getProjectList, getTeamDetail, getTeamMembers } from "../../api";
 
 const Teams = () => {
   const { teamId } = useParams();
   const navigation = useNavigate();
+  const addMemberModal = useModal();
+  const addProjectModal = useModal();
   const teamDetail = useQuery({
     queryKey: ["teamDetail", teamId],
-    queryFn: async () => {
-      const res = await authAxios(`/teams/${teamId}`);
-
-      return res.data;
-    },
+    queryFn: () => getTeamDetail(teamId!),
   });
   const teamProjectList = useQuery({
     queryKey: ["teamDetail", teamId, "projectList"],
-    queryFn: async () => {
-      const res = await authAxios(`/projects/${teamId}/list`);
-
-      return res.data;
-    },
+    queryFn: () => getProjectList(teamId!),
   });
   const teamMemberList = useQuery({
     queryKey: ["teamDetail", teamId, "memberList"],
-    queryFn: async () => {
-      const res = await authAxios(`/teams/${teamId}/members`);
-      return res.data;
-    },
+    queryFn: () => getTeamMembers(teamId!),
   });
 
   return (
     <div>
       <div>{teamDetail.data?.name}</div>
+      <div>
+        <button onClick={addMemberModal.openModal}>멤버 추가</button>
+      </div>
+      <div>
+        <button onClick={addProjectModal.openModal}>프로젝트 추가</button>
+      </div>
+      {addMemberModal.isModalOpen &&
+        addMemberModal.modal(
+          <AddMemberModal onClose={addMemberModal.closeModal} />
+        )}
+      {addProjectModal.isModalOpen &&
+        addProjectModal.modal(
+          <AddProjectModal onClose={addProjectModal.closeModal} />
+        )}
       <S.Container>
         <p>프로젝트 리스트</p>
         <div>
@@ -42,7 +51,7 @@ const Teams = () => {
               <S.Box
                 key={project.id}
                 onClick={() => {
-                  navigation(`/projects/${project.id}`);
+                  navigation(`/projects/${teamId}/${project.id}`);
                 }}
               >
                 {project.title}
@@ -69,6 +78,92 @@ const Teams = () => {
 
 export default Teams;
 
+const AddMemberModal = ({ onClose }: { onClose: () => void }) => {
+  const queryClient = useQueryClient();
+  const param = useParams();
+  const [searchString, setSearchString] = useState("");
+  const [searchResult, setSearchResult] = useState<IUser | null>(null);
+
+  const searchMember = async () => {
+    const res = await authAxios.get(`/users?email=${searchString}`);
+    setSearchResult(res.data);
+  };
+
+  const addMember = async () => {
+    await authAxios.post("/teams/add-members", {
+      teamId: param.teamId,
+      members: [searchResult?.id],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["teamDetail", param.teamId, "memberList"],
+    });
+    alert("멤버 추가 성공");
+    setSearchString("");
+    setSearchResult(null);
+  };
+
+  return (
+    <Modal.Container>
+      <p>멤버 검색</p>
+
+      <TextInput
+        name="search"
+        value={searchString}
+        onChange={(e) => setSearchString(e.target.value)}
+      />
+      <button onClick={searchMember}>검색</button>
+      <p>검색 결과</p>
+      <div>
+        {searchResult && (
+          <div>
+            <p>{searchResult.nickname}</p>
+            <p>{searchResult.email}</p>
+            <button onClick={addMember}>해당멤버 추가하기</button>
+          </div>
+        )}
+      </div>
+      <button onClick={onClose}>닫기</button>
+    </Modal.Container>
+  );
+};
+
+const AddProjectModal = ({ onClose }: { onClose: () => void }) => {
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const queryClient = useQueryClient();
+  const params = useParams();
+  const addProject = async () => {
+    await authAxios.post(`/projects/${params.teamId}`, {
+      name,
+      description,
+    });
+    alert("프로젝트 추가 성공");
+    queryClient.invalidateQueries({
+      queryKey: ["teamDetail", params.teamId, "projectList"],
+    });
+    onClose();
+  };
+  return (
+    <Modal.Container>
+      <p>프로젝트 추가</p>
+      <p>이름</p>
+      <TextInput
+        name="name"
+        onChange={(e) => setName(e.target.value)}
+        value={name}
+      />
+      <p>설명</p>
+      <TextInput
+        name="description"
+        onChange={(e) => setDescription(e.target.value)}
+        value={description}
+      />
+      <button onClick={addProject}>추가</button>
+
+      <button onClick={onClose}>닫기</button>
+    </Modal.Container>
+  );
+};
 const S = {
   Container: styled.div`
     padding: 10px;
@@ -77,5 +172,13 @@ const S = {
   Box: styled.div`
     padding: 10px;
     background-color: aqua;
+  `,
+};
+
+const Modal = {
+  Container: styled.div`
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
   `,
 };

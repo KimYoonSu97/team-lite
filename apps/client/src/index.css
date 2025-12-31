@@ -1,48 +1,101 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@import "tailwindcss";
+
+@theme {
+  /* 1. 폰트 설정 (Pretendard) */
+  --font-sans: "Pretendard", "Inter", sans-serif;
+
+  /* 2. 컬러 팔레트 설정 */
+  /* Brand */
+  --color-brand-primary: #00c6d8;
+  --color-brand-primaryHover: #00b2c2;
+  --color-brand-accent: #aeff00;
+  --color-brand-accentHover: #9be300;
+
+  /* Text */
+  --color-text-default: #333333;
+  --color-text-sub: #999999;
+  --color-text-inverse: #ffffff;
+  --color-text-onAccent: #111111;
+  --color-text-disabled: #cccccc;
+
+  /* Background */
+  --color-bg-base: #ffffff;
+  --color-bg-layer1: #f8f9fa;
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* System */
+  --color-system-success: #28d094;
+  --color-system-error: #ff4d4f;
+  --color-system-warning: #ffc107;
+
+  /* Border */
+  --color-border-default: #e5e5e5;
+  --color-border-focus: #00c6d8;
+
+  /* 드롭섀도우 */
+  --drop-shadow-side-bar: 4px 0px 4px rgba(0, 0, 0, 0.05);
 }
 
-html {
-  line-height: 1.5;
-  -webkit-text-size-adjust: 100%;
+/* 3. 커스텀 유틸리티 (Typography) */
+/* v4에서는 @utility를 사용하여 복합 스타일을 만듭니다 */
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* overflow-y: scroll; */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-body {
-  min-height: 100vh;
-  font-family: system-ui, sans-serif;
+@utility text-display-bold {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 140%;
 }
 
-img,
-picture,
-video,
-canvas,
-svg {
-  display: block;
-  max-width: 100%;
+@utility text-h1 {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 140%;
 }
 
-input,
-button,
-textarea,
-select {
-  font: inherit;
+@utility text-h2 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 140%;
 }
 
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  overflow-wrap: break-word;
+@utility text-h3 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 150%;
 }
 
-#root,
-#__next {
-  isolation: isolate;
+@utility text-body-l {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 150%;
+}
+
+@utility text-body-m-bold {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 150%;
+}
+
+@utility text-body-m {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+@utility text-caption {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 140%;
+}
+
+button {
+  cursor: pointer;
 }

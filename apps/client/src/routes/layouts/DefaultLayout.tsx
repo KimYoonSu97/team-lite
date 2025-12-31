@@ -1,14 +1,34 @@
 import React from "react";
 import { Outlet } from "react-router";
 import SideBar from "../../components/SideBar";
+import styled from "styled-components";
 
 const DefaultLayout = () => {
   return (
-    <div>
-      <SideBar />
-      <Outlet />
+    <div className="flex w-dvw h-dvh">
+      <div className="w-50 bg-bg-base drop-shadow-side-bar shrink-0">
+        <SideBar />
+      </div>
+      <div className="w-full">
+        <Outlet />
+      </div>
     </div>
   );
 };
 
 export default DefaultLayout;
+
+const S = {
+  Container: styled.div`
+    width: 100dvw;
+    height: 100dvh;
+    display: flex;
+  `,
+  SideBar: styled.section`
+    width: 100px;
+    background-color: yellow;
+  `,
+  Outlet: styled.section`
+    width: calc(100% - 100px);
+  `,
+};

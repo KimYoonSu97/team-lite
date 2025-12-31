@@ -1,6 +1,6 @@
-import { CommonData } from "../common";
-import { IProject } from "../project";
-import { IUser } from "../user";
+import type { CommonData } from "../common";
+import type { IProject } from "../project";
+import type { IUser } from "../user";
 
 export interface ICreateTaskDto {
   assigneeId: string;

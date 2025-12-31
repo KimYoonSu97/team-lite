@@ -23,6 +23,7 @@ export class CreateTeamDto implements ICreateTeamDto {
 
   @IsArray({ message: '팀 멤버는 배열이어야 합니다.' })
   @IsString({ message: '팀 멤버는 문자열이어야 합니다.', each: true })
+  @IsOptional()
   members: string[];
 
   @IsOptional()

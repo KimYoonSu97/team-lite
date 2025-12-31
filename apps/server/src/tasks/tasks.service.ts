@@ -10,6 +10,10 @@ export class TasksService {
     ownerId: string,
     createTaskDto: CreateTaskDto,
   ) {
+    console.log('projectId');
+    console.log(projectId);
+    console.log(ownerId);
+    console.log(createTaskDto);
     await this.prismaService.task.create({
       data: {
         projectId,
@@ -18,7 +22,7 @@ export class TasksService {
         title: createTaskDto.title,
         content: createTaskDto.content,
         description: createTaskDto.description,
-        duedate: createTaskDto.deadLine,
+        duedate: new Date(createTaskDto.deadLine),
         priority: createTaskDto.priority,
       },
     });
@@ -41,6 +45,19 @@ export class TasksService {
     const myTaskList = await this.prismaService.task.findMany({
       where: { assigneeId: userId },
       include: {
+        assignee: true,
+        owner: true,
+        project: true,
+      },
+    });
+    return myTaskList;
+  }
+
+  async findMyTasksInProject(userId: string, projectId: string) {
+    const myTaskList = await this.prismaService.task.findMany({
+      where: { assigneeId: userId, projectId },
+      include: {
+        assignee: true,
         owner: true,
         project: true,
       },

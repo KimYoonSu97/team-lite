@@ -46,6 +46,23 @@ export class TasksController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get(':projectId/my')
+  async findMyTasksInProject(
+    @Param() param: { projectId: string },
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    const res = await this.tasksService.findMyTasksInProject(
+      req.user.id,
+      param.projectId,
+    );
+    return res.map((task) => {
+      return plainToInstance(TaskResponseDto, task, {
+        excludeExtraneousValues: true,
+      });
+    });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get('')
   async findMyTasks(
     @Request() req: Request & { user: { id: string; email: string } },
