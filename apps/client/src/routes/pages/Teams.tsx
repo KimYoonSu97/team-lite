@@ -7,12 +7,31 @@ import type { IUser } from "@teamlite/types";
 import { useState } from "react";
 import TextInput from "../../components/TextInput";
 import { getProjectList, getTeamDetail, getTeamMembers } from "../../api";
+import ProjectCard from "../../components/ProjectCard";
+
+const projectSortControllerSelectList = [
+  {
+    name: "할일 많은 순",
+    value: "taskCount",
+  },
+  {
+    name: "가나다 순",
+    value: "name",
+  },
+  {
+    name: "최신 순",
+    value: "createdAt",
+  },
+];
 
 const Teams = () => {
   const { teamId } = useParams();
   const navigation = useNavigate();
   const addMemberModal = useModal();
   const addProjectModal = useModal();
+  const [projectSortController, setProjectSortController] = useState(
+    projectSortControllerSelectList[0]
+  );
   const teamDetail = useQuery({
     queryKey: ["teamDetail", teamId],
     queryFn: () => getTeamDetail(teamId!),
@@ -27,14 +46,7 @@ const Teams = () => {
   });
 
   return (
-    <div>
-      <div>{teamDetail.data?.name}</div>
-      <div>
-        <button onClick={addMemberModal.openModal}>멤버 추가</button>
-      </div>
-      <div>
-        <button onClick={addProjectModal.openModal}>프로젝트 추가</button>
-      </div>
+    <div className="pt-15">
       {addMemberModal.isModalOpen &&
         addMemberModal.modal(
           <AddMemberModal onClose={addMemberModal.closeModal} />
@@ -43,24 +55,42 @@ const Teams = () => {
         addProjectModal.modal(
           <AddProjectModal onClose={addProjectModal.closeModal} />
         )}
-      <S.Container>
-        <p>프로젝트 리스트</p>
-        <div>
-          {teamProjectList.data?.map((project: any) => {
+      {/* <div>
+        <button onClick={addMemberModal.openModal}>멤버 추가</button>
+      </div> */}
+      {/* <div>
+        <button onClick={addProjectModal.openModal}>프로젝트 추가</button>
+      </div> */}
+      <div className="text-h2 text-text-default pl-12">
+        {teamDetail.data?.name} 팀 페이지입니다.
+      </div>
+      <div className="flex flex-col gap-2 mt-7">
+        <div className="pl-12">
+          <p className="text-h2 text-brand-primary">프로젝트</p>{" "}
+        </div>
+        <div className="pl-12">
+          {projectSortControllerSelectList.map((item) => {
             return (
-              <S.Box
-                key={project.id}
-                onClick={() => {
-                  navigation(`/projects/${teamId}/${project.id}`);
-                }}
+              <button
+                key={item.value}
+                onClick={() => setProjectSortController(item)}
+                className={`${projectSortController.value === item.value ? "text-brand-primary text-body-m-bold" : "text-text-sub text-body-m"} `}
               >
-                {project.title}
-              </S.Box>
+                {item.name}
+              </button>
             );
           })}
         </div>
-      </S.Container>
-      <S.Container>
+      </div>
+      <div className="overflow-x-scroll pl-12 pb-4">
+        <div className="mt-4 flex gap-4">
+          {teamProjectList.data?.map((project: any) => {
+            return <ProjectCard key={project.id} project={project} />;
+          })}
+        </div>
+      </div>
+
+      {/* <S.Container>
         <p>멤버 리스트</p>
         <div>
           {teamMemberList.data?.map((member: any) => {
@@ -71,7 +101,7 @@ const Teams = () => {
             );
           })}
         </div>
-      </S.Container>
+      </S.Container> */}
     </div>
   );
 };
