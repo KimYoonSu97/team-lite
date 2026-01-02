@@ -1,10 +1,14 @@
 import type { IProject } from "@teamlite/types";
 import { StickyNote } from "lucide-react";
 import React from "react";
+import { useNavigate, useParams } from "react-router";
 
 const index = ({ project }: { project: IProject }) => {
+  const param = useParams();
+  const navigate = useNavigate();
   return (
     <div
+      onClick={() => navigate(`/projects/${param.teamId}/${project.id}`)}
       key={project.id}
       className={
         "w-[250px] h-[150px] bg-bg-layer1 rounded-[20px] p-[15px] flex flex-col justify-between shrink-0"

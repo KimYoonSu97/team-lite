@@ -1,7 +1,5 @@
 import type { ITeam } from "@teamlite/types";
-import React from "react";
 import { useNavigate } from "react-router";
-import styled from "styled-components";
 import { Ellipsis } from "lucide-react";
 import dayjs from "dayjs";
 
@@ -29,18 +27,8 @@ const index = ({ team }: { team: ITeam }) => {
           {dayjs(team.createdAt).format("YYYY-MM-DD")}
         </p>
       </div>
-      {/* <p>이름</p>
-      <p>{team.name}</p>
-      <p>리더</p>
-      <p>{team.owner.nickname}</p> */}
     </div>
   );
 };
 
 export default index;
-const S = {
-  Box: styled.div`
-    padding: 10px;
-    background-color: aqua;
-  `,
-};

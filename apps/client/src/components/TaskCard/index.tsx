@@ -1,6 +1,5 @@
 import type { ITask } from "@teamlite/types";
 import dayjs from "dayjs";
-import styled from "styled-components";
 
 const index = ({ task }: { task: ITask }) => {
   return (
@@ -12,7 +11,7 @@ const index = ({ task }: { task: ITask }) => {
     >
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-center">
-          <p className="text-h3 text-brand-primary">{task.project.title}</p>
+          <p className="text-h3 text-brand-primary">{task.title}</p>
           <p className="text-caption text-text-sub">{task.priority}</p>
         </div>
         <div className="w-full h-px bg-brand-primary" />
@@ -40,10 +39,3 @@ const index = ({ task }: { task: ITask }) => {
 };
 
 export default index;
-
-const S = {
-  Box: styled.div`
-    padding: 10px;
-    background-color: aqua;
-  `,
-};

@@ -1,12 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router";
-import styled from "styled-components";
 import { authAxios } from "../../api/axios";
 import useModal from "../../hooks/useModal";
-import TextInput from "../../components/TextInput";
 import dayjs from "dayjs";
 import TaskCard from "../../components/TaskCard";
+import InteractBox from "../../components/InteractBox";
 import {
   getAllTaskListByProjectId,
   getMyTaskListByProjectId,
@@ -32,33 +31,54 @@ const Projects = () => {
   });
 
   return (
-    <div>
-      <div>Projects {projectId}</div>
-      <button onClick={addTaskModal.openModal}>할일 추가</button>
+    <div className="pt-15">
       {addTaskModal.isModalOpen &&
         addTaskModal.modal(
           <AddTaskModal closeModal={addTaskModal.closeModal} />
         )}
-      <div>
-        <p> project name</p>
+      <div className="text-h2 text-text-default pl-12 mb-7">
         {projectDetail.data?.title}
       </div>
-      <S.Container>
-        <p>내할일</p>
-        <div>
-          {myTaskList.data?.map((task: any) => {
-            return <TaskCard key={task.id} task={task} />;
-          })}
+
+      <div className="flex flex-col gap-2 mt-7">
+        <div className="pl-12 flex gap-2 items-center">
+          <p className="text-h2 text-brand-primary">내 할일</p>
+          <button
+            onClick={addTaskModal.openModal}
+            className="px-4 py-1.5 bg-brand-primary text-text-inverse rounded-lg hover:bg-brand-primaryHover transition-all duration-200 text-caption"
+          >
+            할일 추가
+          </button>
         </div>
-      </S.Container>
-      <S.Container>
-        <p>팀 할일</p>
-        <div>
-          {taskList.data?.map((task: any) => {
-            return <TaskCard key={task.id} task={task} />;
-          })}
+        <div className="overflow-x-scroll pl-12 pb-4">
+          <div className="mt-4 flex gap-4">
+            {myTaskList.data?.map((task: any) => {
+              return (
+                <InteractBox key={task.id}>
+                  <TaskCard task={task} />
+                </InteractBox>
+              );
+            })}
+          </div>
         </div>
-      </S.Container>
+      </div>
+
+      <div className="flex flex-col gap-2 mt-7">
+        <div className="pl-12">
+          <p className="text-h2 text-brand-primary">팀 할일</p>
+        </div>
+        <div className="overflow-x-scroll pl-12 pb-4">
+          <div className="mt-4 flex gap-4">
+            {taskList.data?.map((task: any) => {
+              return (
+                <InteractBox key={task.id}>
+                  <TaskCard task={task} />
+                </InteractBox>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
@@ -73,7 +93,7 @@ const AddTaskModal = ({ closeModal }: { closeModal: () => void }) => {
   const [deadline, setDeadline] = useState(
     dayjs().add(1, "month").format("YYYY-MM-DD")
   );
-  const [priority, setPriority] = useState("");
+  const [priority, setPriority] = useState("3");
   const [assigneeId, setAssigneeId] = useState("");
   const queryClient = useQueryClient();
   const memberList = useQuery({
@@ -92,66 +112,134 @@ const AddTaskModal = ({ closeModal }: { closeModal: () => void }) => {
     queryClient.invalidateQueries({
       queryKey: ["myTaskList", params.projectId],
     });
+    queryClient.invalidateQueries({
+      queryKey: ["taskList", params.projectId],
+    });
     alert("할일이 추가되었습니다.");
     closeModal();
   };
   return (
-    <Modal.Container>
-      <p>할일추가</p>
-      <p>이름</p>
-      <TextInput value={title} onChange={(e) => setTitle(e.target.value)} />
-      <p>내용</p>
-      <TextInput value={content} onChange={(e) => setContent(e.target.value)} />
-      <p>설명</p>
-      <TextInput
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <p>담당자</p>
-      <select
-        value={assigneeId}
-        onChange={(e) => setAssigneeId(e.target.value)}
-      >
-        {memberList.data?.map((member: any) => {
-          return (
-            <option key={member.id} value={member.id}>
-              {member.nickname}
-            </option>
-          );
-        })}
-      </select>
-      <p>우선순위</p>
-      <select value={priority} onChange={(e) => setPriority(e.target.value)}>
-        {["1", "2", "3", "4", "5"].map((member: any) => {
-          return (
-            <option key={member.id} value={member.id}>
-              {member}
-            </option>
-          );
-        })}
-      </select>
-      <p>{deadline}</p>
-      <button onClick={addTask}>추가</button>
-      <button onClick={closeModal}>닫기</button>
-    </Modal.Container>
+    <div
+      className="w-[500px] bg-white rounded-[20px] p-[30px] flex flex-col gap-6 shadow-xl max-h-[90vh] overflow-y-auto"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="flex flex-col gap-2 w-full">
+        <p className="text-h1 text-brand-primary">할일 추가</p>
+        <div className="w-full h-px bg-brand-primary" />
+      </div>
+
+      <div className="flex flex-col gap-4 w-full">
+        <div className="w-full">
+          <label className="text-body-m-bold text-text-default mb-2 block">
+            제목
+          </label>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="할일 제목을 입력하세요"
+            className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
+          />
+        </div>
+
+        <div className="w-full">
+          <label className="text-body-m-bold text-text-default mb-2 block">
+            내용
+          </label>
+          <input
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="할일 내용을 입력하세요"
+            className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
+          />
+        </div>
+
+        <div className="w-full">
+          <label className="text-body-m-bold text-text-default mb-2 block">
+            설명
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="상세 설명을 입력하세요"
+            className="block pt-2 pb-2 w-full border-2 border-border-default rounded-lg focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub min-h-[80px] resize-none px-3"
+          />
+        </div>
+
+        <div className="w-full">
+          <label className="text-body-m-bold text-text-default mb-2 block">
+            담당자
+          </label>
+          <select
+            value={assigneeId}
+            onChange={(e) => setAssigneeId(e.target.value)}
+            className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 bg-transparent"
+          >
+            <option value="">담당자를 선택하세요</option>
+            {memberList.data?.map((member: any) => {
+              return (
+                <option key={member.id} value={member.id}>
+                  {member.nickname}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+
+        <div className="w-full">
+          <label className="text-body-m-bold text-text-default mb-2 block">
+            우선순위
+          </label>
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 bg-transparent"
+          >
+            {["1", "2", "3", "4", "5"].map((level) => {
+              return (
+                <option key={level} value={level}>
+                  {level} -{" "}
+                  {level === "1"
+                    ? "매우 높음"
+                    : level === "2"
+                      ? "높음"
+                      : level === "3"
+                        ? "보통"
+                        : level === "4"
+                          ? "낮음"
+                          : "매우 낮음"}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+
+        <div className="w-full">
+          <label className="text-body-m-bold text-text-default mb-2 block">
+            마감일
+          </label>
+          <input
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200"
+          />
+        </div>
+      </div>
+
+      <div className="flex gap-3 justify-end">
+        <button
+          onClick={addTask}
+          className="px-6 py-2 bg-brand-primary text-text-inverse rounded-lg hover:bg-brand-primaryHover transition-all duration-200 text-body-m-bold"
+        >
+          추가
+        </button>
+        <button
+          onClick={closeModal}
+          className="px-6 py-2 text-text-sub hover:text-text-default transition-colors duration-200 text-body-m"
+        >
+          닫기
+        </button>
+      </div>
+    </div>
   );
-};
-
-const S = {
-  Container: styled.div`
-    padding: 10px;
-    border: 1px solid red;
-  `,
-  Box: styled.div`
-    padding: 10px;
-    background-color: aqua;
-  `,
-};
-
-const Modal = {
-  Container: styled.div`
-    padding: 10px;
-    background-color: white;
-    border-radius: 10px;
-  `,
 };

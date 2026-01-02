@@ -29,7 +29,7 @@ const Index = () => {
             navigate("/");
           }}
         >
-          홈화면
+          메인
         </button>
         <button
           className="text-h3 text-text-sub block"
