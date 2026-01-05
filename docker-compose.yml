@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: apps/server/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=your_db_url
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      - backend
