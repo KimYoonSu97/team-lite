@@ -1,24 +1,30 @@
-# 1. Build Stage
+# 1. 빌드 단계
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# 루트의 package.json들과 workspace 설정을 복사
+# [중요] 루트와 모든 앱의 package.json을 먼저 복사하여 워크스페이스 구조를 인식시킵니다.
 COPY package*.json ./
 COPY apps/server/package*.json ./apps/server/
-# 만약 공통 패키지(libs)가 있다면 그것도 복사해야 함
-# COPY libs ./libs 
+COPY apps/client/package*.json ./apps/client/
 
+# npm 최신 버전 업데이트 및 의존성 설치
+RUN npm install -g npm@latest
 RUN npm install
 
-# 전체 소스 복사 후 빌드
+# 전체 소스 코드 복사
 COPY . .
-RUN npm run build --workspace=server
 
-# 2. Run Stage
+# 빌드 실행 (워크스페이스 명령어 대신 직접 이동해서 실행하는게 가장 안전합니다)
+RUN cd apps/server && npm run build
+
+# 2. 실행 단계
 FROM node:20-alpine
 WORKDIR /app
+
+# 빌드 결과물과 필요한 파일만 복사
 COPY --from=builder /app/apps/server/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/server/package*.json ./
 
+EXPOSE 3000
 CMD ["node", "dist/main"]
