@@ -51,7 +51,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ubuntu/teamLite
+            cd /home/ubuntu/team-lite
             git pull origin main
             docker compose pull
             docker compose up -d
