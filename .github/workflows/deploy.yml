@@ -40,19 +40,19 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-deploy:
-  needs: build-and-push
-  runs-on: ubuntu-latest
-  steps:
-    - name: EC2 접속 및 배포
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          cd /home/ubuntu/teamLite
-          git pull origin main
-          docker compose pull
-          docker compose up -d
-          docker system prune -f
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: EC2 접속 및 배포
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/teamLite
+            git pull origin main
+            docker compose pull
+            docker compose up -d
+            docker system prune -f
