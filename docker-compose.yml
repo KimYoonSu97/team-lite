@@ -2,6 +2,7 @@ version: "3.8"
 
 services:
   backend:
+    image: kimyoonsu2024/team-lite-backend:latest
     build:
       context: .
       dockerfile: apps/server/Dockerfile
@@ -12,6 +13,7 @@ services:
     restart: always
 
   frontend:
+    image: kimyoonsu2024/team-lite-frontend:latest
     build:
       context: .
       dockerfile: apps/client/Dockerfile
