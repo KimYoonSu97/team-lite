@@ -8,6 +8,7 @@ COPY apps/client/ ./apps/client/
 RUN pnpm install --filter client... --frozen-lockfile
 RUN pnpm run build --filter client
 FROM nginx:alpine
+COPY apps/client/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/apps/client/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

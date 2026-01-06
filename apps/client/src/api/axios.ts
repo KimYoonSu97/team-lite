@@ -2,7 +2,7 @@ import axios from "axios";
 import { useAuthStore } from "../store/auth/useAuthStore";
 
 export const publicAxios = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -11,7 +11,7 @@ export const publicAxios = axios.create({
 });
 
 export const authAxios = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "/api",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

@@ -11,4 +11,13 @@ export default defineConfig({
       "@teamlite/types": path.resolve(__dirname, "../../packages/types"),
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000", // 백엔드 주소
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });

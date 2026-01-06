@@ -8,6 +8,7 @@ async function bootstrap() {
     origin: true,
     credentials: true,
   });
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
