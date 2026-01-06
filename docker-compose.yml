@@ -7,8 +7,8 @@ services:
       dockerfile: apps/server/Dockerfile
     ports:
       - "3000:3000"
-    environment:
-      - DATABASE_URL=your_db_url
+    env_file:
+      - ./apps/server/.env
     restart: always
 
   frontend:
