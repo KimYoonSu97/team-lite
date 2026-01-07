@@ -1,12 +1,20 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { authAxios } from "../../api/axios";
 import useModal from "../../hooks/useModal";
-import type { IUser } from "@teamlite/types";
+import {
+  createProjectSchema,
+  type ICreateProjectDto,
+  type IUser,
+} from "@teamlite/types";
 import { useState } from "react";
 import { getProjectList, getTeamDetail, getTeamMembers } from "../../api";
 import ProjectCard from "../../components/ProjectCard";
 import InteractBox from "../../components/InteractBox";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import ErrorText from "../../components/ErrorText";
+import { useAuthStore } from "../../store/auth/useAuthStore";
 
 const projectSortControllerSelectList = [
   {
@@ -25,7 +33,7 @@ const projectSortControllerSelectList = [
 
 const Teams = () => {
   const { teamId } = useParams();
-  const navigation = useNavigate();
+
   const addMemberModal = useModal();
   const addProjectModal = useModal();
   const [projectSortController, setProjectSortController] = useState(
@@ -86,7 +94,7 @@ const Teams = () => {
           <div className="mt-4 flex gap-4">
             {teamProjectList.data?.map((project: any) => {
               return (
-                <InteractBox>
+                <InteractBox key={project.id}>
                   <ProjectCard key={project.id} project={project} />
                 </InteractBox>
               );
@@ -118,19 +126,6 @@ const Teams = () => {
           })}
         </div>
       </div>
-
-      {/* <S.Container>
-        <p>멤버 리스트</p>
-        <div>
-          {teamMemberList.data?.map((member: any) => {
-            return (
-              <S.Box key={member.id} onClick={() => {}}>
-                {member.nickname}
-              </S.Box>
-            );
-          })}
-        </div>
-      </S.Container> */}
     </div>
   );
 };
@@ -140,11 +135,26 @@ export default Teams;
 const AddMemberModal = ({ onClose }: { onClose: () => void }) => {
   const queryClient = useQueryClient();
   const param = useParams();
+  const userEmail = useAuthStore((state) => state.user?.email);
   const [searchString, setSearchString] = useState("");
   const [searchResult, setSearchResult] = useState<IUser | null>(null);
 
   const searchMember = async () => {
+    setSearchResult(null);
+    if (!searchString) {
+      alert("검색어를 입력하세요.");
+      return;
+    }
+    if (searchString === userEmail) {
+      alert("자신은 검색 할 수 없습니다.");
+      return;
+    }
     const res = await authAxios.get(`/users?email=${searchString}`);
+    if (res.data.length === 0) {
+      alert("해당 이메일로 등록된 사용자가 없습니다.");
+      return;
+    }
+    console.log(res.data);
     setSearchResult(res.data);
   };
 
@@ -220,73 +230,95 @@ const AddMemberModal = ({ onClose }: { onClose: () => void }) => {
 };
 
 const AddProjectModal = ({ onClose }: { onClose: () => void }) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const createProjectHookForm = useForm<ICreateProjectDto>({
+    resolver: zodResolver(createProjectSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      profileImage: null,
+    },
+  });
+
+  const createProjectMutation = useMutation({
+    mutationFn: async (data: ICreateProjectDto) => {
+      await authAxios.post(`/projects/${params.teamId}`, data);
+    },
+    onSuccess: () => {
+      alert("프로젝트 추가 성공");
+      queryClient.invalidateQueries({
+        queryKey: ["teamDetail", params.teamId, "projectList"],
+      });
+      onClose();
+    },
+    onError: () => {
+      alert("프로젝트 추가 실패");
+    },
+  });
+
   const queryClient = useQueryClient();
   const params = useParams();
-  const addProject = async () => {
-    await authAxios.post(`/projects/${params.teamId}`, {
-      name,
-      description,
-    });
-    alert("프로젝트 추가 성공");
-    queryClient.invalidateQueries({
-      queryKey: ["teamDetail", params.teamId, "projectList"],
-    });
-    onClose();
+  const onSubmit = (data: ICreateProjectDto) => {
+    createProjectMutation.mutate(data);
   };
+
   return (
-    <div
-      className="w-[450px] bg-white rounded-[20px] p-[30px] flex flex-col gap-6 shadow-xl"
-      onClick={(e) => e.stopPropagation()}
-    >
-      <div className="flex flex-col gap-2 w-full">
-        <p className="text-h1 text-brand-primary">프로젝트 추가</p>
-        <div className="w-full h-px bg-brand-primary" />
-      </div>
-
-      <div className="flex flex-col gap-4 w-full">
-        <div className="w-full">
-          <label className="text-body-m-bold text-text-default mb-2 block">
-            프로젝트 이름
-          </label>
-          <input
-            name="name"
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            placeholder="프로젝트 이름을 입력하세요"
-            className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
-          />
+    <div onClick={(e) => e.stopPropagation()}>
+      <form
+        className="w-[450px] bg-white rounded-[20px] p-[30px] flex flex-col gap-6 shadow-xl"
+        onSubmit={createProjectHookForm.handleSubmit(onSubmit)}
+      >
+        <div className="flex flex-col gap-2 w-full">
+          <p className="text-h1 text-brand-primary">프로젝트 추가</p>
+          <div className="w-full h-px bg-brand-primary" />
         </div>
 
-        <div className="w-full">
-          <label className="text-body-m-bold text-text-default mb-2 block">
-            프로젝트 설명
-          </label>
-          <input
-            name="description"
-            onChange={(e) => setDescription(e.target.value)}
-            value={description}
-            placeholder="프로젝트 설명을 입력하세요"
-            className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
-          />
-        </div>
-      </div>
+        <div className="flex flex-col gap-4 w-full">
+          <div className="w-full">
+            <label className="text-body-m-bold text-text-default mb-2 block">
+              프로젝트 이름
+            </label>
+            <input
+              {...createProjectHookForm.register("name")}
+              placeholder="프로젝트 이름을 입력하세요"
+              className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
+            />
+            <ErrorText
+              error={createProjectHookForm.formState.errors.name?.message}
+            />
+          </div>
 
-      <div className="flex gap-3 justify-end">
-        <button
-          onClick={addProject}
-          className="px-6 py-2 bg-brand-primary text-text-inverse rounded-lg hover:bg-brand-primaryHover transition-all duration-200 text-body-m-bold"
-        >
-          추가
-        </button>
-        <button
-          onClick={onClose}
-          className="px-6 py-2 text-text-sub hover:text-text-default transition-colors duration-200 text-body-m"
-        >
-          닫기
-        </button>
-      </div>
+          <div className="w-full">
+            <label className="text-body-m-bold text-text-default mb-2 block">
+              프로젝트 설명
+            </label>
+            <input
+              {...createProjectHookForm.register("description")}
+              placeholder="프로젝트 설명을 입력하세요"
+              className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
+            />
+            <ErrorText
+              error={
+                createProjectHookForm.formState.errors.description?.message
+              }
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-3 justify-end">
+          <button
+            type="submit"
+            className="px-6 py-2 bg-brand-primary text-text-inverse rounded-lg hover:bg-brand-primaryHover transition-all duration-200 text-body-m-bold"
+          >
+            추가
+          </button>
+          <button
+            onClick={onClose}
+            className="px-6 py-2 text-text-sub hover:text-text-default transition-colors duration-200 text-body-m"
+          >
+            닫기
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

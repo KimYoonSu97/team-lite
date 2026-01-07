@@ -11,8 +11,8 @@ import {
 export class CreateTeamDto implements ICreateTeamDto {
   @IsNotEmpty({ message: '팀 이름은 필수 입력 항목입니다.' })
   @IsString({ message: '팀 이름은 문자열이어야 합니다.' })
-  @MinLength(1, { message: '팀 이름은 최소 3자 이상이어야 합니다.' })
-  @MaxLength(50, { message: '팀 이름은 최대 50자 이하여야 합니다.' })
+  @MinLength(3, { message: '팀 이름은 최소 3자 이상이어야 합니다.' })
+  @MaxLength(15, { message: '팀 이름은 최대 15자 이하여야 합니다.' })
   name: string;
 
   @IsNotEmpty({ message: '팀 설명은 필수 입력 항목입니다.' })
@@ -27,5 +27,5 @@ export class CreateTeamDto implements ICreateTeamDto {
   members: string[];
 
   @IsOptional()
-  profileImage?: File;
+  profileImage?: string | null;
 }

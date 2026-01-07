@@ -53,7 +53,7 @@ export class UsersController {
   async getUser(@Query('email') email: string) {
     const user = await this.usersService.findOneByEmail(email);
     if (!user) {
-      throw new HttpException('User not found', 404);
+      return [];
     }
     return plainToInstance(UserResponseDto, user, {
       excludeExtraneousValues: true,
