@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import TaskCard from "../../components/TaskCard";
 import InteractBox from "../../components/InteractBox";
 import {
+  createTask,
   getAllTaskListByProjectId,
   getMyTaskListByProjectId,
   getProjectDetail,
@@ -115,10 +116,7 @@ const AddTaskModal = ({ closeModal }: { closeModal: () => void }) => {
 
   const taskMutation = useMutation({
     mutationFn: (data: ICreateTaskDto) => {
-      return authAxios.post(`/tasks/${params.projectId}`, {
-        ...data,
-        deadLine: dayjs(data.deadLine).toISOString(),
-      });
+      return createTask(params.projectId!, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -223,10 +221,10 @@ const AddTaskModal = ({ closeModal }: { closeModal: () => void }) => {
               {...createTaskHookForm.register("priority")}
               className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 bg-transparent"
             >
-              {["1", "2", "3", "4", "5"].map((level) => {
+              {PRIORITY_LIST.map((level) => {
                 return (
-                  <option key={level} value={level}>
-                    {PRIORITY_LIST[level]}
+                  <option key={level.value} value={level.value}>
+                    {level.label}
                   </option>
                 );
               })}

@@ -36,3 +36,7 @@ export interface ITask extends CommonData {
   status: string | null;
   duedate: Date;
 }
+
+export interface IUpdateTaskDto {
+  status: string;
+}
