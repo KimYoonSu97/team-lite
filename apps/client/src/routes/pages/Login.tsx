@@ -3,8 +3,31 @@ import { publicAxios } from "../../api/axios";
 import { useAuthStore } from "../../store/auth/useAuthStore";
 import { useNavigate } from "react-router";
 import logoLine from "../../assets/logo-line.png";
+import type { ILoginDto } from "@teamlite/types";
+import { loginSchema } from "@teamlite/types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const Login = () => {
+  const loginHookForm = useForm<ILoginDto>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+  const onSubmitLogin = async (data: ILoginDto) => {
+    const res = await publicAxios.post("/auth/login", {
+      email: data.email,
+      password: data.password,
+    });
+
+    if (res.status === 201) {
+      login(res.data.accessToken, res.data.user, true);
+      navigate("/");
+    }
+  };
+
   const { login } = useAuthStore();
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -15,43 +38,36 @@ const Login = () => {
     }
   }, [isLoggedIn]);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const res = await publicAxios.post("/auth/login", { email, password });
-
-    if (res.status === 201) {
-      login(res.data.accessToken, res.data.user, true);
-      navigate("/");
-    }
-  };
   const navigateToSignIn = () => {
     navigate("/signIn");
   };
   return (
     <div className="flex w-full h-dvh">
       <div className="flex flex-col w-full justify-center">
-        <form name="login" onSubmit={onSubmit} className="pl-30">
+        <form
+          name="login"
+          onSubmit={loginHookForm.handleSubmit(onSubmitLogin)}
+          className="pl-30"
+        >
           <p className="text-h1 text-brand-primary mb-8">
             로그인 후 사용 가능합니다.
           </p>
           <div className="w-70 mb-6">
             <input
-              placeholder="아이디"
-              type="text"
-              name="email"
+              {...loginHookForm.register("email")}
+              placeholder="이메일"
               className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
             />
+            <p>{loginHookForm.formState.errors.email?.message}</p>
           </div>
           <div className="w-70 mb-10">
             <input
+              {...loginHookForm.register("password")}
               placeholder="비밀번호"
               type="password"
-              name="password"
               className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
             />
+            <p>{loginHookForm.formState.errors.password?.message}</p>
           </div>
           <div className="flex gap-4">
             <button

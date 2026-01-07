@@ -1,5 +1,6 @@
 import type { ITask } from "@teamlite/types";
 import dayjs from "dayjs";
+import { PRIORITY_LIST } from "../../constants";
 
 const index = ({ task }: { task: ITask }) => {
   return (
@@ -12,7 +13,9 @@ const index = ({ task }: { task: ITask }) => {
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-center">
           <p className="text-h3 text-brand-primary">{task.title}</p>
-          <p className="text-caption text-text-sub">{task.priority}</p>
+          <p className="text-caption text-text-sub">
+            {PRIORITY_LIST[task.priority ? task.priority : "1"]}
+          </p>
         </div>
         <div className="w-full h-px bg-brand-primary" />
         <div className="h-[120px] overflow-scroll scrollbar-hide">
