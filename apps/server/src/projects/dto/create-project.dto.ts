@@ -21,5 +21,5 @@ export class CreateProjectDto implements ICreateProjectDto {
   description: string;
 
   @IsOptional()
-  profileImage?: File;
+  profileImage?: string | null;
 }

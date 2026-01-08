@@ -10,10 +10,6 @@ export class TasksService {
     ownerId: string,
     createTaskDto: CreateTaskDto,
   ) {
-    console.log('projectId');
-    console.log(projectId);
-    console.log(ownerId);
-    console.log(createTaskDto);
     await this.prismaService.task.create({
       data: {
         projectId,
@@ -63,5 +59,12 @@ export class TasksService {
       },
     });
     return myTaskList;
+  }
+
+  patchTaskStatus(taskId: string, status: string) {
+    return this.prismaService.task.update({
+      where: { id: taskId },
+      data: { status },
+    });
   }
 }

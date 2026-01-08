@@ -14,6 +14,8 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { plainToInstance } from 'class-transformer';
 import { TaskResponseDto } from './dto/taskResponse.dto';
+import { IUpdateTaskDto } from '@teamlite/types';
+import { PatchTaskStatusDto } from './dto/patch-task-status.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -73,5 +75,16 @@ export class TasksController {
         excludeExtraneousValues: true,
       });
     });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Patch(':id/status')
+  update(
+    @Param() param: { id: string },
+    @Body() updateTaskDto: PatchTaskStatusDto,
+  ) {
+    console.log(updateTaskDto);
+    console.log(param.id, updateTaskDto.status);
+    return this.tasksService.patchTaskStatus(param.id, updateTaskDto.status);
   }
 }
