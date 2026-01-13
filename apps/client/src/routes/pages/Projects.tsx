@@ -1,7 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
 import { useParams } from "react-router";
-import { authAxios } from "../../api/axios";
 import useModal from "../../hooks/useModal";
 import dayjs from "dayjs";
 import TaskCard from "../../components/TaskCard";
