@@ -8,16 +8,16 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-    const newUser = await this.prisma.user.create({
-      data: {
-        ...createUserDto,
-        password: hashedPassword,
-      },
-    });
-    return newUser;
-  }
+  // async create(createUserDto: CreateUserDto) {
+  //   const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+  //   const newUser = await this.prisma.user.create({
+  //     data: {
+  //       ...createUserDto,
+  //       password: hashedPassword,
+  //     },
+  //   });
+  //   return newUser;
+  // }
 
   async checkEmail(checkEmailDto: CheckEmailDto) {
     const user = await this.prisma.user.findUnique({
