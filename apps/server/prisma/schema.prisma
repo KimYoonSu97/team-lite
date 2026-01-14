@@ -24,17 +24,6 @@ model user {
   deletedAt   DateTime? @db.Timestamptz(6) @map("deleted_at")
   currentRefreshToken String?
   socialAccounts socialAccount[]
-
-  // id                          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  // email                       String         @unique
-  // password                    String
-  // nickname                    String
-  // profileImage               String?        @map("profile_image")
-  // description                 String?
-  // isUse                      Boolean        @default(true) @map("is_use")
-  // createdAt                  DateTime       @default(now()) @db.Timestamptz(6) @map("created_at")
-  // updatedAt                  DateTime       @default(now()) @db.Timestamptz(6) @map("updated_at")
-  // deletedAt                  DateTime?      @db.Timestamptz(6) @map("deleted_at")
   project                     project[]
   taskAssigneeIdTouser task[]         @relation("task_assignee_idTouser")
   taskOwnerIdTouser    task[]         @relation("task_owner_idTouser")

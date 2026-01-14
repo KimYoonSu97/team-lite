@@ -11,9 +11,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { TeamsService } from './teams.service';
-import { CreateTeamDto } from './dto/create-team.dto';
+import type { CreateTeamDto } from './dto/create-team.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { AddMembersDto } from './dto/add-member.dto';
+import type { AddMembersDto } from './dto/add-member.dto';
 import { TeamResponseDto } from './dto/TeamResponse.dto';
 import { UserResponseDto } from 'src/common/dto/userResponse.dto';
 import { plainToInstance } from 'class-transformer';

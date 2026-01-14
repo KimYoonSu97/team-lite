@@ -10,12 +10,12 @@ import {
   Request,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { CreateTaskDto } from './dto/create-task.dto';
+import type { CreateTaskDto } from './dto/create-task.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { plainToInstance } from 'class-transformer';
 import { TaskResponseDto } from './dto/taskResponse.dto';
-import { IUpdateTaskDto } from '@teamlite/types';
-import { PatchTaskStatusDto } from './dto/patch-task-status.dto';
+
+import type { PatchTaskStatusDto } from './dto/patch-task-status.dto';
 
 @Controller('tasks')
 export class TasksController {

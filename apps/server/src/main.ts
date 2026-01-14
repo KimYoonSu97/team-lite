@@ -10,7 +10,7 @@ async function bootstrap() {
     credentials: true,
   });
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ZodValidationPipe());
+  // app.useGlobalPipes(new ZodValidationPipe());
 
   await app.listen(3000);
 }

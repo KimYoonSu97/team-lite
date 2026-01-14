@@ -9,8 +9,6 @@ export class UserResponseDto extends CommonResponseDto implements IUser {
   nickname: string;
   @Expose()
   profileImage: string | null;
-  @Exclude()
-  password: string;
 
   constructor(partial: Partial<UserResponseDto>) {
     super();
