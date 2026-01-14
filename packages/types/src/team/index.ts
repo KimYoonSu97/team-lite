@@ -18,10 +18,12 @@ export const createTeamSchema = z.object({
 
 export interface ICreateTeamDto extends z.infer<typeof createTeamSchema> {}
 
-export interface IAddMembersDto {
-  teamId: string;
-  members: string[];
-}
+export const addMemberSchema = z.object({
+  teamId: z.string(),
+  members: z.array(z.string()),
+});
+
+export interface IAddMembersDto extends z.infer<typeof addMemberSchema> {}
 
 export interface ITeam extends CommonData {
   name: string;
