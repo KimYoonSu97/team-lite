@@ -21,13 +21,13 @@ import { plainToInstance } from 'class-transformer';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
-    const newUser = await this.usersService.create(createUserDto);
-    return plainToInstance(UserResponseDto, newUser, {
-      excludeExtraneousValues: true,
-    });
-  }
+  // @Post()
+  // async create(@Body() createUserDto: CreateUserDto) {
+  //   const newUser = await this.usersService.create(createUserDto);
+  //   return plainToInstance(UserResponseDto, newUser, {
+  //     excludeExtraneousValues: true,
+  //   });
+  // }
 
   @Post('check-email')
   checkEmail(@Body() checkEmailDto: CheckEmailDto) {

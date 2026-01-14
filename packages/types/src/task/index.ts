@@ -22,6 +22,9 @@ export const createTaskSchema = z.object({
     .string({ message: "담당자는 필수 입력 항목입니다." })
     .min(1, { message: "담당자는 필수 입력 항목입니다." }),
 });
+export const updateTaskSchema = z.object({
+  status: z.string(),
+});
 
 export interface ICreateTaskDto extends z.infer<typeof createTaskSchema> {}
 
@@ -37,6 +40,4 @@ export interface ITask extends CommonData {
   duedate: Date;
 }
 
-export interface IUpdateTaskDto {
-  status: string;
-}
+export interface IUpdateTaskDto extends z.infer<typeof updateTaskSchema> {}

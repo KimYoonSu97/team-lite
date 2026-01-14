@@ -7,6 +7,54 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TeamType {
+  PERSONAL
+  GROUP
+}
+
+model user {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email String @unique
+  nickname String?
+  profileImage    String? @map("image_url")
+  description String?
+  isUse       Boolean   @default(true) @map("is_use")
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt   DateTime  @default(now()) @db.Timestamptz(6) @map("updated_at")
+  deletedAt   DateTime? @db.Timestamptz(6) @map("deleted_at")
+  currentRefreshToken String?
+  socialAccounts socialAccount[]
+
+  // id                          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  // email                       String         @unique
+  // password                    String
+  // nickname                    String
+  // profileImage               String?        @map("profile_image")
+  // description                 String?
+  // isUse                      Boolean        @default(true) @map("is_use")
+  // createdAt                  DateTime       @default(now()) @db.Timestamptz(6) @map("created_at")
+  // updatedAt                  DateTime       @default(now()) @db.Timestamptz(6) @map("updated_at")
+  // deletedAt                  DateTime?      @db.Timestamptz(6) @map("deleted_at")
+  project                     project[]
+  taskAssigneeIdTouser task[]         @relation("task_assignee_idTouser")
+  taskOwnerIdTouser    task[]         @relation("task_owner_idTouser")
+  team                        team[]
+  teamMembers                team_members[]
+  projectMembers project_members[]
+}
+
+model socialAccount{
+  id String @id @default(uuid())
+  provider String
+  providerId String
+  userId String @db.Uuid @map("user_id")
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([provider,providerId])
+}
+
+
+
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model project {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -23,6 +71,7 @@ model project {
   owner        user      @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   team         team      @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   task         task[]
+  projectMembers project_members[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -54,6 +103,7 @@ model team {
   ownerId     String         @db.Uuid @map("owner_id")
   description  String?
   isUse        Boolean        @default(true) @map("is_use")
+  teamType  TeamType @default(GROUP) @map("team_type")
   createdAt    DateTime       @default(now()) @db.Timestamptz(6) @map("created_at")
   updatedAt    DateTime       @default(now()) @db.Timestamptz(6) @map("updated_at")
   deletedAt    DateTime?      @db.Timestamptz(6) @map("deleted_at")
@@ -75,23 +125,21 @@ model team_members {
   deletedAt   DateTime? @db.Timestamptz(6) @map("deleted_at")
   team        team      @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   user        user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  @@unique([teamId,userId])
+}
+
+model project_members {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  projectId String @db.Uuid @map("project_id")
+  userId String @db.Uuid @map("user_id")
+  role String? @default("MEMBER")
+  description String?
+  isUse Boolean @default(true) @map("is_use")
+  createdAt DateTime @default(now()) @db.Timestamptz(6) @map("created_at")
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) @map("updated_at")
+  deletedAt DateTime? @db.Timestamptz(6) @map("deleted_at")
+  project project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model user {
-  id                          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  email                       String         @unique
-  password                    String
-  nickname                    String
-  profileImage               String?        @map("profile_image")
-  description                 String?
-  isUse                      Boolean        @default(true) @map("is_use")
-  createdAt                  DateTime       @default(now()) @db.Timestamptz(6) @map("created_at")
-  updatedAt                  DateTime       @default(now()) @db.Timestamptz(6) @map("updated_at")
-  deletedAt                  DateTime?      @db.Timestamptz(6) @map("deleted_at")
-  project                     project[]
-  taskAssigneeIdTouser task[]         @relation("task_assignee_idTouser")
-  taskOwnerIdTouser    task[]         @relation("task_owner_idTouser")
-  team                        team[]
-  teamMembers                team_members[]
-}

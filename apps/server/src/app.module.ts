@@ -7,6 +7,8 @@ import { TasksModule } from './tasks/tasks.module';
 import { ProjectsModule } from './projects/projects.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AwsModule } from './aws/aws.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -16,6 +18,10 @@ import { PrismaModule } from './prisma/prisma.module';
     ProjectsModule,
     AuthModule,
     PrismaModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    AwsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
