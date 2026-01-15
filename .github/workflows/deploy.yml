@@ -46,16 +46,19 @@ jobs:
     steps:
       - name: EC2 접속 및 배포
         uses: appleboy/ssh-action@master
+        env:
+          MY_ENV_FILE: ${{ secrets.PROD_ENV_FILE }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: MY_ENV_FILE
           script: |
             cd /home/ubuntu/team-lite
             git pull origin main
             mkdir -p ./apps/server
             rm -f ./apps/server/.env
-            echo "${{ secrets.PROD_ENV_FILE }}" > ./apps/server/.env
+            echo "$MY_ENV_FILE" > ./apps/server/.env
             docker compose pull
             docker compose up -d
             docker system prune -f
