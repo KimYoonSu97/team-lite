@@ -42,52 +42,20 @@ const Login = () => {
     navigate("/signIn");
   };
   return (
-    <div className="flex w-full h-dvh">
-      <div className="flex flex-col w-full justify-center">
-        <form
-          name="login"
-          onSubmit={loginHookForm.handleSubmit(onSubmitLogin)}
-          className="pl-30"
-        >
-          <p className="text-h1 text-brand-primary mb-8">
-            로그인 후 사용 가능합니다.
-          </p>
-          <div className="w-70 mb-6">
-            <input
-              {...loginHookForm.register("email")}
-              placeholder="이메일"
-              className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
-            />
-            <p>{loginHookForm.formState.errors.email?.message}</p>
-          </div>
-          <div className="w-70 mb-10">
-            <input
-              {...loginHookForm.register("password")}
-              placeholder="비밀번호"
-              type="password"
-              className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
-            />
-            <p>{loginHookForm.formState.errors.password?.message}</p>
-          </div>
-          <div className="flex gap-4">
-            <button
-              type="submit"
-              className="px-8 py-3 bg-brand-primary text-text-inverse rounded-lg hover:bg-brand-primaryHover transition-all duration-200 text-body-m-bold"
-            >
-              로그인
-            </button>
-            <button
-              onClick={navigateToSignIn}
-              className="px-8 py-3 text-text-sub hover:text-text-default transition-colors duration-200 text-body-m"
-            >
-              회원가입
-            </button>
-          </div>
-        </form>
-      </div>
-      <div className="w-full bg-linear-to-br from-brand-primary to-brand-primaryHover flex flex-col justify-center items-center">
-        <div>
-          <img src={logoLine} alt="logo-line" className="w-120" />
+    <div className="flex w-full h-dvh justify-center items-center">
+      <div className="flex flex-col justify-between items-center max-w-[420px]">
+        <div className={"w-[260px] h-[80px] bg-blue-100"}>로고</div>
+        <div className="flex flex-col gap-3 justify-center items-center mt-7">
+          <h1 className="text-h1">간편로그인으로 서비스를 바로 이용하세요</h1>
+          <p>3초만에 빠른 회원가입</p>
+        </div>
+        <div className={"mt-7 w-full"}>
+          <button
+            className={"w-full bg-amber-400 p-5"}
+            onClick={() => navigate("http://localhost:3000/api/auth/github")}
+          >
+            깃허브로 로그인하기
+          </button>
         </div>
       </div>
     </div>

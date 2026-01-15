@@ -6,7 +6,7 @@ import styled from "styled-components";
 const DefaultLayout = () => {
   return (
     <div className="flex w-dvw h-dvh">
-      <div className="w-50 bg-bg-base drop-shadow-side-bar shrink-0">
+      <div className="w-[313px] h-full bg-pink-300">
         <SideBar />
       </div>
       <div className="w-full">

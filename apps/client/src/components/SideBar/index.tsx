@@ -1,66 +1,43 @@
-import { useNavigate, useLocation } from "react-router";
-import { useAuthStore } from "../../store/auth/useAuthStore";
-import Button from "../Button";
-import styled from "styled-components";
-import logoColor from "../../assets/logo-color.png";
+const team = [1, 2, 3, 4, 5, 6, 7, 8];
 
 const Index = () => {
-  const { logout } = useAuthStore();
-  const navigate = useNavigate();
-  const location = useLocation();
-
   return (
-    <div className="flex flex-col gap-15 p-8">
-      <div>
-        <img src={logoColor} alt="logo-color" />
-      </div>
-      <div className="flex flex-col gap-4 items-start">
-        <button
-          onClick={() => {
-            alert("채팅기능은 준비중입니다.");
-          }}
-          className="text-h3 text-text-sub block"
-        >
-          채팅
-        </button>
-        <button
-          className="text-h3 text-brand-primary block"
-          onClick={() => {
-            navigate("/");
-          }}
-        >
-          메인
-        </button>
-        <button
-          className="text-h3 text-text-sub block"
-          onClick={() => {
-            navigate("/projects");
-          }}
-        >
-          내 프로젝트
-        </button>
-        <button
-          className="text-h3 text-text-sub block"
-          onClick={() => {
-            logout();
-            navigate("/login");
-          }}
-        >
-          로그아웃
-        </button>
+    <div className="h-full">
+      <div className="flex h-full">
+        <div className="bg-amber-100 w-[73px] flex flex-col gap-2">
+          <div className="h-[80px] bg-pink-300">상단 공백</div>
+          {team.map((team) => (
+            <div
+              key={team}
+              className={
+                "bg-blue-500 flex items-center justify-center pt-[10px] pb-[10px]"
+              }
+            >
+              <div className="w-[32px] h-[32px] rounded-[8px] bg-amber-200 flex items-center justify-center">
+                {team}
+              </div>
+            </div>
+          ))}
+          <div
+            className={
+              "bg-blue-500 flex items-center justify-center pt-[10px] pb-[10px]"
+            }
+          >
+            <div className="w-[32px] h-[32px] rounded-[8px] bg-amber-200 flex items-center justify-center">
+              플러스버튼
+            </div>
+          </div>
+        </div>
+        <div className="bg-amber-400 w-[240px]">
+          <div className="h-[80px] bg-pink-300">선택한 팀 이름 더보기</div>
+          <div>네비게이션</div>
+          <div>프라이빗</div>
+          <div>팀스페이스</div>
+          <div>췌링~</div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Index;
-
-const S = {
-  Container: styled.div`
-    padding: 20px 0;
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    flex-direction: column;
-  `,
-};

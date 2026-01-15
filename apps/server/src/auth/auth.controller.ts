@@ -9,9 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { LoginResponseDto } from './dto/loginResponse.dto';
-import { plainToInstance } from 'class-transformer';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 
@@ -29,27 +26,14 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   async githubAuthRedirect(@Req() req, @Res() res) {
-    const { accessToken } = this.authService.login(req.user);
-    const frontendUrl = this.configService.get('FRONTEND_URL') as string;
-    res.redirect(`${frontendUrl}/auth/callback?accessToken=${accessToken}`);
-  }
+    const user = this.authService.login({
+      email: req.user.email,
+      id: req.user.id,
+    });
 
-  // @Post('login')
-  // async login(@Body() loginDto: LoginDto) {
-  //   const user = await this.authService.validateUser(
-  //     loginDto.email,
-  //     loginDto.password,
-  //   );
-  //   if (!user) {
-  //     throw new UnauthorizedException('Invalid credentials');
-  //   }
-  //   const resposne = this.authService.getAccessToken(user);
-  //   return plainToInstance(
-  //     LoginResponseDto,
-  //     { ...resposne, user },
-  //     {
-  //       excludeExtraneousValues: true,
-  //     },
-  //   );
-  // }
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL');
+    res.redirect(
+      `${frontendUrl}/auth/callback?accessToken=${user.accessToken}`,
+    );
+  }
 }
