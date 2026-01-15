@@ -52,7 +52,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/team-lite
-            echo "${{ secrets.PROD_ENV_FILE }}" > .env
+            echo "${{ secrets.PROD_ENV_FILE }}" > ./apps/server/.env
             git pull origin main
             docker compose pull
             docker compose up -d
