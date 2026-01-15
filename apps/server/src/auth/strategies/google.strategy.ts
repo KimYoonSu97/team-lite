@@ -34,13 +34,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       nickname: profile.displayName,
     });
 
-    return {
-      email: email,
-      profileImage: avatar,
-      provider: 'google',
-      providerId: profile.id,
-      nickname: profile.displayName,
-      accessToken: accessToken,
-    };
+    return user;
   }
 }

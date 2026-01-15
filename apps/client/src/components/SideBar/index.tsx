@@ -1,6 +1,11 @@
+import { useNavigate } from "react-router";
+import { useAuthStore } from "../../store/auth/useAuthStore";
+
 const team = [1, 2, 3, 4, 5, 6, 7, 8];
 
 const Index = () => {
+  const user = useAuthStore();
+  const navigator = useNavigate();
   return (
     <div className="h-full">
       <div className="flex h-full">
@@ -34,6 +39,14 @@ const Index = () => {
           <div>프라이빗</div>
           <div>팀스페이스</div>
           <div>췌링~</div>
+          <div
+            onClick={() => {
+              user.logout();
+              navigator("/login");
+            }}
+          >
+            로그아웃
+          </div>
         </div>
       </div>
     </div>

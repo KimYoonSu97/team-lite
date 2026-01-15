@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Teams from "./pages/Teams";
 import Projects from "./pages/Projects";
 import MyProjects from "./pages/MyProjects";
+import Auth from "./pages/Auth";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "signIn",
     element: <SignIn />,
+  },
+  {
+    path: "/auth/callback",
+    element: <Auth />,
   },
   {
     path: "/",

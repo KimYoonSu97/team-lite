@@ -26,7 +26,7 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   async githubAuthRedirect(@Req() req, @Res() res) {
-    const user = this.authService.login({
+    const user = this.authService.getAccessToken({
       email: req.user.email,
       id: req.user.id,
     });
@@ -44,7 +44,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res) {
-    const user = this.authService.login({
+    const user = this.authService.getAccessToken({
       email: req.user.email,
       id: req.user.id,
     });

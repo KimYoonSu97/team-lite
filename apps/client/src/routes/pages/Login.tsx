@@ -49,12 +49,12 @@ const Login = () => {
           <h1 className="text-h1">간편로그인으로 서비스를 바로 이용하세요</h1>
           <p>3초만에 빠른 회원가입</p>
         </div>
-        <div className={"mt-7 w-full"}>
-          <button
-            className={"w-full bg-amber-400 p-5"}
-            onClick={() => navigate("http://localhost:3000/api/auth/github")}
-          >
-            깃허브로 로그인하기
+        <div className={"mt-7 w-full flex flex-col gap-2"}>
+          <button className={"w-full bg-amber-400 p-5"}>
+            <a href={`/api/auth/github`}>깃허브로 로그인하기</a>
+          </button>
+          <button className={"w-full bg-amber-400 p-5"}>
+            <a href={`/api/auth/google`}>구글로 로그인하기</a>
           </button>
         </div>
       </div>
