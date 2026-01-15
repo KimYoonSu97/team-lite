@@ -52,8 +52,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ubuntu/team-lite
-            echo "${{ secrets.PROD_ENV_FILE }}" > ./apps/server/.env
             git pull origin main
+            mkdir -p ./apps/server
+            rm -f ./apps/server/.env
+            echo "${{ secrets.PROD_ENV_FILE }}" > ./apps/server/.env
             docker compose pull
             docker compose up -d
             docker system prune -f
