@@ -14,6 +14,10 @@ export class ProjectResponseDto extends CommonResponseDto implements IProject {
   owner: UserResponseDto;
 
   @Expose()
+  @Type(() => UserResponseDto)
+  projectMembers: UserResponseDto[];
+
+  @Expose()
   title: string;
 
   @Expose()

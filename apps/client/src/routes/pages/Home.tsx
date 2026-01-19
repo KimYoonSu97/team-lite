@@ -6,7 +6,7 @@ import {
   type ITeam,
 } from "@teamlite/types";
 import useModal from "../../hooks/useModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTeam, getMyTaskList, getTeamList } from "../../api";
 import TaskCard from "../../components/TaskCard";
 import TeamCard from "../../components/TeamCard";
@@ -14,6 +14,7 @@ import InteractBox from "../../components/InteractBox";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorText from "../../components/ErrorText";
+import { useNavigate } from "react-router";
 
 const taskSortControllerSelectList = [
   {
@@ -39,28 +40,25 @@ const teamSortControllerSelectList = [
 ];
 
 const Home = () => {
-  const { user } = useAuthStore();
-  const [taskSortController, setTaskSortController] = useState(
-    taskSortControllerSelectList[0]
-  );
-  const [teamSortController, setTeamSortController] = useState(
-    teamSortControllerSelectList[0]
-  );
-
-  const { isModalOpen, closeModal, openModal, modal } = useModal();
+  const navigate = useNavigate();
   const teamList = useQuery({
     queryKey: ["teamList"],
     queryFn: getTeamList,
   });
 
-  const taskList = useQuery({
-    queryKey: ["taskList", "home"],
-    queryFn: getMyTaskList,
-  });
+  useEffect(() => {
+    if (teamList.data) {
+      const personalTeam = teamList.data.find(
+        (team) => team.teamType === "PERSONAL",
+      );
+      navigate(`/team/${personalTeam?.id}`);
+    }
+  }, [teamList.data]);
 
   return (
-    <div className="pt-15">
-      {isModalOpen && modal(<AddTeamModal onClose={closeModal} />)}
+    <div className="">
+      로딩중
+      {/* {isModalOpen && modal(<AddTeamModal onClose={closeModal} />)}
       <div className="text-h2 text-text-default pl-12">
         {user?.nickname}님 반갑습니다.
       </div>
@@ -122,7 +120,7 @@ const Home = () => {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

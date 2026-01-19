@@ -24,7 +24,7 @@ export const getTeamMembers = async (teamId: string) => {
   return res.data;
 };
 
-export const getTeamDetail = async (teamId: string) => {
+export const getTeamDetail = async (teamId: string): Promise<ITeam> => {
   const res = await authAxios(`/teams/${teamId}`);
 
   return res.data;

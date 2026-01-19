@@ -19,9 +19,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import ErrorText from "../../components/ErrorText";
 import { PRIORITY_LIST } from "../../constants";
+import type { IUser } from "@teamlite/types";
 
 const Projects = () => {
-  const { projectId } = useParams();
+  const { projectId, teamId } = useParams();
+
   const addTaskModal = useModal();
   const projectDetail = useQuery({
     queryKey: ["projectDetail", projectId],
@@ -36,10 +38,26 @@ const Projects = () => {
     queryKey: ["taskList", projectId],
     queryFn: () => getAllTaskListByProjectId(projectId!),
   });
+  const teamMemberList = useQuery({
+    queryKey: ["teamDetail", teamId, "memberList"],
+    queryFn: () => getTeamMembers(teamId!),
+  });
 
   return (
-    <div className="pt-15">
-      {addTaskModal.isModalOpen &&
+    <div className="">
+      <div>사이드 네비게이션에서 프로젝트를 눌렀을때 나오는 화면</div>
+      <div className="border p-4">
+        <p>팀의 전체 팀원 리스트</p>
+        <div className="border p-4">
+          {teamMemberList.data?.map((member: IUser) => {
+            return <div key={member.id}>{member.nickname}</div>;
+          })}
+        </div>
+      </div>
+      <div className="border p-4">
+        <p>프로젝트에 추가된 팀원</p>
+      </div>
+      {/* {addTaskModal.isModalOpen &&
         addTaskModal.modal(
           <AddTaskModal closeModal={addTaskModal.closeModal} />
         )}
@@ -85,7 +103,7 @@ const Projects = () => {
             })}
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
