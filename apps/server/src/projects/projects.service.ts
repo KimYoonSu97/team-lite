@@ -52,6 +52,17 @@ export class ProjectsService {
     );
   }
 
+  async findProjectMember(projectId: string) {
+    return await this.prisma.project_members.findMany({
+      where: {
+        projectId,
+      },
+      include: {
+        user: true,
+      },
+    });
+  }
+
   // async findAll(teamId:string)
 
   async findMyProject(teamId: string, userId: string) {

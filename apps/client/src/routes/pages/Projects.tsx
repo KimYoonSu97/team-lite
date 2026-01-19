@@ -2,13 +2,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import useModal from "../../hooks/useModal";
 import dayjs from "dayjs";
-import TaskCard from "../../components/TaskCard";
-import InteractBox from "../../components/InteractBox";
 import {
   createTask,
   getAllTaskListByProjectId,
   getMyTaskListByProjectId,
   getProjectDetail,
+  getProjectMember,
   getTeamMembers,
 } from "../../api";
 import {
@@ -20,31 +19,28 @@ import { useForm } from "react-hook-form";
 import ErrorText from "../../components/ErrorText";
 import { PRIORITY_LIST } from "../../constants";
 import type { IUser } from "@teamlite/types";
+import AddProjecctMember from "../../components/modalContent/AddProjecctMember";
 
 const Projects = () => {
   const { projectId, teamId } = useParams();
 
-  const addTaskModal = useModal();
-  const projectDetail = useQuery({
-    queryKey: ["projectDetail", projectId],
-    queryFn: () => getProjectDetail(projectId!),
-  });
-  const myTaskList = useQuery({
-    queryKey: ["myTaskList", projectId],
-    queryFn: () => getMyTaskListByProjectId(projectId!),
-  });
-
-  const taskList = useQuery({
-    queryKey: ["taskList", projectId],
-    queryFn: () => getAllTaskListByProjectId(projectId!),
-  });
   const teamMemberList = useQuery({
     queryKey: ["teamDetail", teamId, "memberList"],
     queryFn: () => getTeamMembers(teamId!),
   });
 
+  const projectMemberList = useQuery({
+    queryKey: ["projectDetail", projectId, "memberList"],
+    queryFn: () => getProjectMember(projectId!),
+  });
+  const addProjectMemberModal = useModal();
+
   return (
     <div className="">
+      {addProjectMemberModal.isModalOpen &&
+        addProjectMemberModal.modal(
+          <AddProjecctMember onClose={addProjectMemberModal.closeModal} />,
+        )}
       <div>사이드 네비게이션에서 프로젝트를 눌렀을때 나오는 화면</div>
       <div className="border p-4">
         <p>팀의 전체 팀원 리스트</p>
@@ -55,7 +51,13 @@ const Projects = () => {
         </div>
       </div>
       <div className="border p-4">
+        <div onClick={addProjectMemberModal.openModal}>팀원추가</div>
         <p>프로젝트에 추가된 팀원</p>
+        <div>
+          {projectMemberList.data?.map((member: IUser) => {
+            return <div key={member.id}>{member.nickname}</div>;
+          })}
+        </div>
       </div>
       {/* {addTaskModal.isModalOpen &&
         addTaskModal.modal(

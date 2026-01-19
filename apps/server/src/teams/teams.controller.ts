@@ -61,6 +61,19 @@ export class TeamsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get('personal/:userId')
+  async findPersonal(@Param('userId') userId: string) {
+    const res = await this.teamsService.findPersonal(userId);
+
+    if (!res) {
+      throw new NotFoundException('팀을 찾을 수 없습니다.');
+    }
+    return plainToInstance(TeamResponseDto, res, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get(':teamId')
   async findOne(@Param('teamId') id: string) {
     const res = await this.teamsService.findOne(id);
