@@ -1,6 +1,7 @@
 import z from "zod";
 import type { CommonData } from "../common";
 import type { IUser } from "../user";
+import type { IProject } from "../project";
 export enum TeamType {
   PERSONAL = "PERSONAL",
   GROUP = "GROUP",
@@ -34,4 +35,5 @@ export interface ITeam extends CommonData {
   profileImage: string | null;
   owner: IUser;
   teamType: TeamType;
+  project: IProject[];
 }

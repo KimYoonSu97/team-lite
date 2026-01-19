@@ -15,6 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ProjectResponseDto } from './dto/projectResponseDto';
 import { plainToInstance } from 'class-transformer';
 import type { AddProjectMemberDto } from './dto/add-member.dto';
+import { UserResponseDto } from 'src/common/dto/userResponse.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -59,6 +60,17 @@ export class ProjectsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get(':projectId/member')
+  async findProjectMember(@Param('projectId') projectId: string) {
+    const res = await this.projectsService.findProjectMember(projectId);
+    return res.map((member) => {
+      return plainToInstance(UserResponseDto, member.user, {
+        excludeExtraneousValues: true,
+      });
+    });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get(':projectId')
   async findOne(@Param('projectId') projectId: string) {
     const res = await this.projectsService.findOne(projectId);
@@ -72,7 +84,7 @@ export class ProjectsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('add-members')
+  @Post(':projectId/add-members')
   async addMembers(@Body() addProjectMemberDto: AddProjectMemberDto) {
     const res = await this.projectsService.addMembers(
       addProjectMemberDto.projectId,

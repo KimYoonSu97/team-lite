@@ -29,3 +29,8 @@ export const getTeamDetail = async (teamId: string): Promise<ITeam> => {
 
   return res.data;
 };
+
+export const getPersonalTeamList = async (userId: string): Promise<ITeam> => {
+  const res = await authAxios(`/teams/personal/${userId}`);
+  return res.data;
+};

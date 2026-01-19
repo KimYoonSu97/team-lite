@@ -1,13 +1,15 @@
 import React from "react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useAuthStore } from "../../store/auth/useAuthStore";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTeamDetail } from "../../api";
 import GroupTeamNav from "./GroupTeamNav";
+import PrivateNavigation from "./PrivateNavigation";
 
 const NavigationBar = () => {
   const user = useAuthStore();
   const navigator = useNavigate();
+
   const param = useParams();
   const teamId = param.teamId;
   const teamDetail = useQuery({
@@ -19,7 +21,7 @@ const NavigationBar = () => {
     <div className="border w-[240px]">
       <div className="h-[80px] border">{teamDetail.data?.name}</div>
       <div className="p-4 border">Navigation</div>
-      <div className="p-4 border">Private</div>
+      <PrivateNavigation />
       {/* {teamDetail.data?.isPublic} */}
       {teamDetail.data?.teamType !== "PERSONAL" && <GroupTeamNav />}
 

@@ -51,6 +51,20 @@ export class TeamsService {
     return team;
   }
 
+  async findPersonal(userId: string) {
+    const persnalTeam = await this.prisma.team.findFirst({
+      where: {
+        ownerId: userId,
+        teamType: 'PERSONAL',
+      },
+      include: {
+        owner: true,
+        project: true,
+      },
+    });
+    return persnalTeam;
+  }
+
   async findMembers(teamId: string) {
     const members = await this.prisma.team_members.findMany({
       where: { teamId },
