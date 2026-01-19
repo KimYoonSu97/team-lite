@@ -5,7 +5,9 @@
   "entryFile": "main",
   "compilerOptions": {
     "deleteOutDir": true,
-    "watchAssets": true
+    "watchAssets": true,
+    "webpack": true,
+    "webpackConfigPath": "webpack.config.js"
   },
   "watchOptions": {
     "watchPolling": true,

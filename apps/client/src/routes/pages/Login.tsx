@@ -1,34 +1,10 @@
-import React, { useEffect } from "react";
-import { publicAxios } from "../../api/axios";
+import { useEffect } from "react";
 import { useAuthStore } from "../../store/auth/useAuthStore";
 import { useNavigate } from "react-router";
-import logoLine from "../../assets/logo-line.png";
-import type { ILoginDto } from "@teamlite/types";
-import { loginSchema } from "@teamlite/types";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import googleIcon from "../../assets/svg/google.svg";
+import logo from "../../assets/logo-color.png";
 
 const Login = () => {
-  const loginHookForm = useForm<ILoginDto>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-  const onSubmitLogin = async (data: ILoginDto) => {
-    const res = await publicAxios.post("/auth/login", {
-      email: data.email,
-      password: data.password,
-    });
-
-    if (res.status === 201) {
-      login(res.data.accessToken, res.data.user, true);
-      navigate("/");
-    }
-  };
-
-  const { login } = useAuthStore();
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
@@ -38,24 +14,48 @@ const Login = () => {
     }
   }, [isLoggedIn]);
 
-  const navigateToSignIn = () => {
-    navigate("/signIn");
-  };
   return (
     <div className="flex w-full h-dvh justify-center items-center">
       <div className="flex flex-col justify-between items-center max-w-[420px]">
-        <div className={"w-[260px] h-[80px] bg-blue-100"}>로고</div>
+        <div
+          className={
+            "w-[420px] h-[80px] flex flex-col justify-center items-center"
+          }
+        >
+          <img
+            src={logo}
+            alt="로고"
+            width={260}
+            height={80}
+            className={"contain-layout"}
+          />
+        </div>
         <div className="flex flex-col gap-3 justify-center items-center mt-7">
-          <h1 className="text-h1">간편로그인으로 서비스를 바로 이용하세요</h1>
-          <p>3초만에 빠른 회원가입</p>
-          <p>v2</p>
+          <h1 className="text-[32px] font-semibold whitespace-pre-wrap text-center">
+            {"간편로그인으로\n서비스를 바로 이용하세요"}
+          </h1>
+          <p className="text-gray-500 text-[20px]">3초만에 빠른 회원가입</p>
         </div>
         <div className={"mt-7 w-full flex flex-col gap-2"}>
-          <button className={"w-full bg-amber-400 p-5"}>
-            <a href={`/api/auth/github`}>깃허브로 로그인하기</a>
-          </button>
-          <button className={"w-full bg-amber-400 p-5"}>
-            <a href={`/api/auth/google`}>구글로 로그인하기</a>
+          <div
+            className={
+              "w-full rounded-[8px] border-2 border-gray-200 pb-[18px] pt-[18px] pl-5 pr-5 flex justify-between items-center cursor-pointer"
+            }
+            onClick={() => {
+              window.location.href = "/api/auth/google";
+            }}
+          >
+            <img src={googleIcon} width={20} height={20} alt="google" />
+            Google로 시작하기
+            <div className={"w-[20px] h-[20px]"}></div>
+          </div>
+          <button
+            className={"w-full bg-amber-400 p-5"}
+            onClick={() => {
+              window.location.href = `/api/auth/github`;
+            }}
+          >
+            깃헙으로 시작하기
           </button>
         </div>
       </div>

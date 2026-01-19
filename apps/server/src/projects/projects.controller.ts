@@ -14,6 +14,7 @@ import type { CreateProjectDto } from './dto/create-project.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ProjectResponseDto } from './dto/projectResponseDto';
 import { plainToInstance } from 'class-transformer';
+import type { AddProjectMemberDto } from './dto/add-member.dto';
 
 @Controller('projects')
 export class ProjectsController {
@@ -35,12 +36,17 @@ export class ProjectsController {
       // memo 에러처리
       throw new NotFoundException('실행할 수 없습니다.');
     }
-    return res;
+    return plainToInstance(ProjectResponseDto, res, {
+      excludeExtraneousValues: true,
+    });
   }
   @UseGuards(AuthGuard('jwt'))
   @Get(':teamId/list')
-  async findAll(@Param('teamId') teamId: string) {
-    const res = await this.projectsService.findAll(teamId);
+  async findAll(
+    @Param('teamId') teamId: string,
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    const res = await this.projectsService.findAll(teamId, req.user.id);
     if (!res) {
       // memo 에러처리
       throw new NotFoundException('실행할 수 없습니다.');
@@ -63,5 +69,25 @@ export class ProjectsController {
     return plainToInstance(ProjectResponseDto, res, {
       excludeExtraneousValues: true,
     });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('add-members')
+  async addMembers(@Body() addProjectMemberDto: AddProjectMemberDto) {
+    const res = await this.projectsService.addMembers(
+      addProjectMemberDto.projectId,
+      addProjectMemberDto.members,
+    );
+    return res;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':projectId/member/:userId')
+  async deleteMembers(
+    @Param('projectId') projectId: string,
+    @Param('userId') userId: string,
+  ) {
+    const res = await this.projectsService.deleteMember(projectId, userId);
+    return res;
   }
 }

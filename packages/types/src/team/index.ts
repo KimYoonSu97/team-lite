@@ -1,6 +1,10 @@
 import z from "zod";
 import type { CommonData } from "../common";
 import type { IUser } from "../user";
+export enum TeamType {
+  PERSONAL = "PERSONAL",
+  GROUP = "GROUP",
+}
 
 export const createTeamSchema = z.object({
   name: z
@@ -29,4 +33,5 @@ export interface ITeam extends CommonData {
   name: string;
   profileImage: string | null;
   owner: IUser;
+  teamType: TeamType;
 }

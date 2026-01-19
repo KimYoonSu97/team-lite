@@ -3,6 +3,11 @@ import type { CommonData } from "../common";
 import type { ITeam } from "../team";
 import type { IUser } from "../user";
 
+export const addProjectMemberSchema = z.object({
+  projectId: z.string(),
+  members: z.array(z.string()),
+});
+
 export const createProjectSchema = z.object({
   name: z
     .string({ message: "프로젝트 이름은 필수 입력 항목입니다." })
@@ -26,3 +31,7 @@ export interface IProject extends CommonData {
   profileImage: string | null;
   status: string;
 }
+
+export interface IAddProjectMembers extends z.infer<
+  typeof addProjectMemberSchema
+> {}

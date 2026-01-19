@@ -37,7 +37,7 @@ const Teams = () => {
   const addMemberModal = useModal();
   const addProjectModal = useModal();
   const [projectSortController, setProjectSortController] = useState(
-    projectSortControllerSelectList[0]
+    projectSortControllerSelectList[0],
   );
   const teamDetail = useQuery({
     queryKey: ["teamDetail", teamId],
@@ -53,14 +53,25 @@ const Teams = () => {
   });
 
   return (
-    <div className="pt-15 pb-15 flex gap-12 h-full">
+    <div className="">
+      <div>사이드 바에서 팀을 눌렀을때 나오는 페이지</div>
       {addMemberModal.isModalOpen &&
         addMemberModal.modal(
-          <AddMemberModal onClose={addMemberModal.closeModal} />
+          <AddMemberModal onClose={addMemberModal.closeModal} />,
         )}
+      <div className="text-h2 pt-4 pb-4 text-brand-primary w-full flex justify-center items-center gap-2">
+        <p>멤버 리스트</p>
+        <button
+          onClick={addMemberModal.openModal}
+          className="px-3 py-1 bg-brand-accent text-text-onAccent rounded-lg hover:bg-brand-accentHover transition-all duration-200 text-caption"
+        >
+          멤버 추가
+        </button>
+      </div>
+      {/* 
       {addProjectModal.isModalOpen &&
         addProjectModal.modal(
-          <AddProjectModal onClose={addProjectModal.closeModal} />
+          <AddProjectModal onClose={addProjectModal.closeModal} />,
         )}
       <div className="flex-1">
         <div className="text-h2 text-text-default pl-12">
@@ -103,15 +114,7 @@ const Teams = () => {
         </div>
       </div>
       <div className="rounded-lg shadow-2xl mr-12 flex flex-col gap-2 min-w-[300px]">
-        <div className="text-h2 pt-4 pb-4 text-brand-primary w-full flex justify-center items-center gap-2">
-          <p>멤버 리스트</p>
-          <button
-            onClick={addMemberModal.openModal}
-            className="px-3 py-1 bg-brand-accent text-text-onAccent rounded-lg hover:bg-brand-accentHover transition-all duration-200 text-caption"
-          >
-            멤버 추가
-          </button>
-        </div>
+      
         <div className="flex flex-col gap-4 overflow-auto pl-12 pr-12 pb-4">
           {teamMemberList.data?.map((member: IUser) => {
             return (
@@ -125,7 +128,7 @@ const Teams = () => {
             );
           })}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

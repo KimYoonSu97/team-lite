@@ -29,7 +29,8 @@ const router = createBrowserRouter([
     loader: protectedLoader,
     children: [
       { path: "/", element: <Home /> },
-      { path: "/teams/:teamId", element: <Teams /> },
+      { path: "/team/:teamId", element: <Teams /> },
+      { path: "/team/:teamId/project/:projectId", element: <Projects /> },
       { path: "/projects/:teamId/:projectId", element: <Projects /> },
       { path: "/projects", element: <MyProjects /> },
     ],
