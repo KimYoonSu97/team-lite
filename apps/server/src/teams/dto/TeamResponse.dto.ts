@@ -21,6 +21,10 @@ export class TeamResponseDto extends CommonResponseDto implements ITeam {
   @Type(() => ProjectResponseDto)
   project: ProjectResponseDto[];
 
+  @Expose()
+  @Type(() => UserResponseDto)
+  teamMembers: UserResponseDto[];
+
   constructor(partial: Partial<TeamResponseDto>) {
     super();
     Object.assign(this, partial);

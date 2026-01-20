@@ -6,34 +6,82 @@
 
   /* 2. 컬러 팔레트 설정 */
   /* Brand */
-  --color-brand-primary: #00c6d8;
-  --color-brand-primaryHover: #00b2c2;
-  --color-brand-accent: #aeff00;
-  --color-brand-accentHover: #9be300;
-
-  /* Text */
-  --color-text-default: #333333;
-  --color-text-sub: #999999;
-  --color-text-inverse: #ffffff;
-  --color-text-onAccent: #111111;
-  --color-text-disabled: #cccccc;
-
-  /* Background */
-  --color-bg-base: #ffffff;
-  --color-bg-layer1: #f8f9fa;
-  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+  --color-brand-primary: #3730a3;
+  --color-brand-sub1: #0f766e;
+  --color-brand-sub2: #aeff00;
+  --color-brand-sub3: #f4c430;
 
   /* System */
-  --color-system-success: #28d094;
-  --color-system-error: #ff4d4f;
-  --color-system-warning: #ffc107;
+  --color-system-success: #00a63e;
+  --color-system-error: #e7000b;
+  --color-system-warning: #ffb900;
 
-  /* Border */
-  --color-border-default: #e5e5e5;
-  --color-border-focus: #00c6d8;
+  /* Background */
+  --color-bg-1: E4E4E7;
+  --color-bg-2: #f4f4f5;
+  --color-bg-3: #fafafa;
 
-  /* 드롭섀도우 */
-  --drop-shadow-side-bar: 4px 0px 4px rgba(0, 0, 0, 0.05);
+  /* Line */
+
+  --color-line-1: #18181b;
+  --color-line-2: #9f9fa9;
+  --color-line-3: #d4d4d8;
+  --color-line-4: #e4e4e7;
+  --color-line-5: #f4f4f5;
+
+  /* Text */
+  --color-text-1: #18181b;
+  --color-text-2: #3f3f47;
+  --color-text-3: #52525c;
+  --color-text-4: #71717b;
+  --color-text-5: #9f9f49;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Light.woff2")
+    format("woff2");
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Medium.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-SemiBold.woff2")
+    format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@utility typo-semibold {
+  font-weight: 600;
+}
+
+@utility typo-medium {
+  font-weight: 500;
+}
+
+@utility typo-regular {
+  font-weight: 400;
+}
+
+@utility typo-light {
+  font-weight: 300;
 }
 
 /* 3. 커스텀 유틸리티 (Typography) */
@@ -48,52 +96,95 @@
   }
 }
 
-@utility text-display-bold {
-  font-size: 32px;
-  font-weight: 700;
+@utility typo-xs {
+  font-size: 12px; /* 12px */
+  letter-spacing: 0em;
   line-height: 140%;
-}
-
-@utility text-h1 {
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 140%;
-}
-
-@utility text-h2 {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 140%;
-}
-
-@utility text-h3 {
-  font-size: 18px;
   font-weight: 600;
-  line-height: 150%;
 }
 
-@utility text-body-l {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 150%;
-}
-
-@utility text-body-m-bold {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 150%;
-}
-
-@utility text-body-m {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 150%;
-}
-
-@utility text-caption {
-  font-size: 12px;
-  font-weight: 400;
+@utility typo-sm {
+  font-size: 14px; /* 14px */
+  letter-spacing: 0em;
   line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-base {
+  font-size: 16px; /* 16px */
+  letter-spacing: 0em;
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-lg {
+  font-size: 18px; /* 18px */
+  letter-spacing: 0em;
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-xl {
+  font-size: 20px; /* 20px */
+  letter-spacing: 0em;
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-2xl {
+  font-size: 24px; /* 24px */
+  letter-spacing: 0em;
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-3xl {
+  font-size: 28px; /* 28px */
+  letter-spacing: 0em;
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-4xl {
+  font-size: 32px; /* 32px */
+  letter-spacing: 0em;
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-5xl {
+  font-size: 36px; /* 36px */
+  letter-spacing: 0em;
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-6xl {
+  font-size: 40px; /* 40px */
+  letter-spacing: -0.025em; /* -2.5% */
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-7xl {
+  font-size: 48px; /* 48px */
+  letter-spacing: -0.025em; /* -2.5% */
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-8xl {
+  font-size: 60px; /* 60px */
+  letter-spacing: -0.025em; /* -2.5% */
+  line-height: 140%;
+  font-weight: 600;
+}
+
+@utility typo-9xl {
+  font-size: 100px; /* 100px */
+  letter-spacing: -0.025em; /* -2.5% */
+  line-height: 140%;
+  font-weight: 600;
 }
 
 button {

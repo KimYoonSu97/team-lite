@@ -15,6 +15,7 @@
     "@tanstack/react-query": "^5.90.12",
     "@teamlite/types": "workspace:^",
     "axios": "^1.13.2",
+    "clsx": "^2.1.1",
     "dayjs": "^1.11.19",
     "lucide-react": "^0.562.0",
     "react": "^19.2.0",

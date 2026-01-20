@@ -36,4 +36,5 @@ export interface ITeam extends CommonData {
   owner: IUser;
   teamType: TeamType;
   project: IProject[];
+  teamMembers: IUser[];
 }

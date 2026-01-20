@@ -2,7 +2,7 @@ import React from "react";
 import useModal from "../../hooks/useModal";
 import AddProject from "../modalContent/AddProject";
 import { useQuery } from "@tanstack/react-query";
-import { getPersonalTeamList } from "../../api";
+import { getPersonalTeam } from "../../api";
 import { useAuthStore } from "../../store/auth/useAuthStore";
 import { useNavigate } from "react-router";
 
@@ -12,7 +12,7 @@ const PrivateNavigation = () => {
   const navigate = useNavigate();
   const personalTeam = useQuery({
     queryKey: ["personalTeam"],
-    queryFn: () => getPersonalTeamList(user.user!.id),
+    queryFn: () => getPersonalTeam(user.user!.id),
   });
   const handleClickProject = (projectId: string) => {
     navigate(`/team/${personalTeam.data?.id}/project/${projectId}`);

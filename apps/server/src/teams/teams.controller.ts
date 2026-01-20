@@ -77,12 +77,24 @@ export class TeamsController {
   @Get(':teamId')
   async findOne(@Param('teamId') id: string) {
     const res = await this.teamsService.findOne(id);
+
     if (!res) {
       throw new NotFoundException('팀을 찾을 수 없습니다.');
     }
-    return plainToInstance(TeamResponseDto, res, {
-      excludeExtraneousValues: true,
+    const replaceTeamMembers = res.teamMembers.map((member) => {
+      return member.user;
     });
+
+    return plainToInstance(
+      TeamResponseDto,
+      {
+        ...res,
+        teamMembers: replaceTeamMembers,
+      },
+      {
+        excludeExtraneousValues: true,
+      },
+    );
   }
 
   @UseGuards(AuthGuard('jwt'))
