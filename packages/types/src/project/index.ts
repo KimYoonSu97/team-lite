@@ -27,9 +27,12 @@ export interface ICreateProjectDto extends z.infer<
 export interface IProject extends CommonData {
   team: ITeam;
   owner: IUser;
+  projectMembers: IUser[];
   title: string;
   profileImage: string | null;
   status: string;
+  myTaskCount: number;
+  allTaskCount: number;
 }
 
 export interface IAddProjectMembers extends z.infer<

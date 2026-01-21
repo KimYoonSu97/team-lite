@@ -72,12 +72,16 @@ export class ProjectsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':projectId')
-  async findOne(@Param('projectId') projectId: string) {
-    const res = await this.projectsService.findOne(projectId);
+  async findOne(
+    @Param('projectId') projectId: string,
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    const res = await this.projectsService.findOne(projectId, req.user.id);
     if (!res) {
       // memo 에러처리
       throw new NotFoundException('실행할 수 없습니다.');
     }
+    // console.log(res);
     return plainToInstance(ProjectResponseDto, res, {
       excludeExtraneousValues: true,
     });

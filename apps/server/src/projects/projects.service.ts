@@ -78,14 +78,38 @@ export class ProjectsService {
     });
   }
 
-  async findOne(projectId: string) {
-    return await this.prisma.project.findUnique({
+  async findOne(projectId: string, userId: string) {
+    const projectDetail = await this.prisma.project.findUnique({
       where: { id: projectId },
       include: {
         team: true,
         owner: true,
+        projectMembers: {
+          include: { user: true },
+        },
       },
     });
+
+    const myTask = await this.prisma.task.count({
+      where: {
+        projectId,
+        assigneeId: userId,
+      },
+    });
+    const allTask = await this.prisma.task.count({
+      where: {
+        projectId,
+      },
+    });
+
+    return {
+      ...projectDetail,
+      myTaskCount: myTask,
+      allTaskCount: allTask,
+      projectMembers: projectDetail?.projectMembers.map(
+        (member) => member.user,
+      ),
+    };
   }
 
   async addMembers(projectId: string, members: string[]) {

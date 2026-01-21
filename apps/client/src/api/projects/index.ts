@@ -1,7 +1,9 @@
 import type { IProject, IUser } from "@teamlite/types";
 import { authAxios } from "../axios";
 
-export const getProjectDetail = async (projectId: string) => {
+export const getProjectDetail = async (
+  projectId: string,
+): Promise<IProject> => {
   const res = await authAxios.get(`/projects/${projectId}`);
   return res.data;
 };

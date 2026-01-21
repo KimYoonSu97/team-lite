@@ -32,6 +32,12 @@ export class ProjectResponseDto extends CommonResponseDto implements IProject {
   @Exclude()
   teamId: string;
 
+  @Expose()
+  myTaskCount: number;
+
+  @Expose()
+  allTaskCount: number;
+
   constructor(partial: Partial<ProjectResponseDto>) {
     super();
     Object.assign(this, partial);

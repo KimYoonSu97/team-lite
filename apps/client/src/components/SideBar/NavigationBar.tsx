@@ -20,6 +20,7 @@ import type { ITeam } from "@teamlite/types";
 
 const NavigationBar = ({ toggle }: { toggle: () => void }) => {
   const user = useAuthStore();
+  const navigate = useNavigate();
 
   const param = useParams();
   const teamId = param.teamId;
@@ -38,7 +39,7 @@ const NavigationBar = ({ toggle }: { toggle: () => void }) => {
   });
 
   return (
-    <div className="w-[260px] border-r border-line-3 pt-2">
+    <div className="w-[260px] border-r border-line-3 pt-2 overflow-y-scroll scrollbar-hide ">
       <LogoSection toggle={toggle} />
       <div className="px-3 flex flex-col gap-2">
         {!personalTeam.isLoading && !personalTeam.isError && (
@@ -54,6 +55,14 @@ const NavigationBar = ({ toggle }: { toggle: () => void }) => {
           teamDetail.data?.teamType === "GROUP" && (
             <TeamSpaceSection team={teamDetail.data!} />
           )}
+      </div>
+      <div
+        onClick={() => {
+          user.logout();
+          navigate("/login");
+        }}
+      >
+        로그아웃
       </div>
     </div>
   );
@@ -227,27 +236,3 @@ const TeamSpaceSection = ({ team }: { team: ITeam }) => {
     </SectionContainer>
   );
 };
-
-// <div className="h-[80px] border">
-//   <div class="flex items-center justify-center  cursor-pointer p-[6px]">
-//     <div class="w-12 h-12 flex justify-center items-center border-2 border-brand-sub2 rounded-[12px]">
-//       <div class="w-10 h-10 rounded-[8px] flex items-center justify-center bg-bg-2">
-//         김
-//       </div>
-//     </div>
-//   </div>
-// </div>
-// <div className="p-4 border">Navigation</div>
-// <PrivateNavigation />
-// {/* {teamDetail.data?.isPublic} */}
-// {teamDetail.data?.teamType !== "PERSONAL" && <GroupTeamNav />}
-
-// <div className="p-4 border">Chatting</div>
-// <div
-//   onClick={() => {
-//     user.logout();
-//     navigator("/login");
-//   }}
-// >
-//   로그아웃
-// </div>
