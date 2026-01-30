@@ -15,6 +15,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import ErrorText from "../../components/ErrorText";
 import { useAuthStore } from "../../store/auth/useAuthStore";
+import CommonContainer from "../../components/CommonContainer";
+import TeamHeader from "../../components/TeamHeader";
+import TaskListItem from "../../components/task/TaskListItem";
+import TaskCardItem from "../../components/task/TaskCardItem";
 
 const projectSortControllerSelectList = [
   {
@@ -47,14 +51,81 @@ const Teams = () => {
     queryKey: ["teamDetail", teamId, "projectList"],
     queryFn: () => getProjectList(teamId!),
   });
-  const teamMemberList = useQuery({
-    queryKey: ["teamDetail", teamId, "memberList"],
-    queryFn: () => getTeamMembers(teamId!),
-  });
+
+  if (teamDetail.isLoading) {
+    return <div>로딩중</div>;
+  }
 
   return (
-    <div className="">
-      <div>사이드 바에서 팀을 눌렀을때 나오는 페이지</div>
+    <div>
+      <TeamHeader team={teamDetail.data!}></TeamHeader>
+      <CommonContainer>
+        <div className="flex flex-col gap-12">
+          <div className="flex flex-col gap-3 overflow-hidden">
+            <p className="typo-medium typo-sm text-text-4">전체 프로젝트</p>
+            <div className="flex gap-4 w-full overflow-x-auto">
+              {teamProjectList.data?.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <p className="typo-medium typo-sm text-text-4">새로운 작업</p>
+            <div className="flex gap-4 w-full overflow-x-auto">
+              <TaskCardItem
+                task={{
+                  id: "1",
+                  title: "할일",
+                  duedate: new Date(),
+                  priority: "high",
+                  status: "todo",
+                  project: {
+                    title: "프로젝트",
+                  },
+                  assignee: {
+                    id: "1",
+                    nickname: "김윤성",
+                    profileImage: "https://via.placeholder.com/150",
+                    email: "test@gmail.com",
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    deletedAt: null,
+                    isUse: true,
+                    description: null,
+                  },
+                }}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <p className="typo-medium typo-sm text-text-4">다가오는 일정</p>
+            <div>
+              <TaskListItem
+                task={{
+                  id: "1",
+                  title: "할일",
+                  duedate: new Date(),
+                  priority: "high",
+                  status: "todo",
+                  assignee: {
+                    id: "1",
+                    nickname: "김윤성",
+                    profileImage: "https://via.placeholder.com/150",
+                    email: "test@gmail.com",
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    deletedAt: null,
+                    isUse: true,
+                    description: null,
+                  },
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      </CommonContainer>
+
+      {/* <div>사이드 바에서 팀을 눌렀을때 나오는 페이지</div>
       {addMemberModal.isModalOpen &&
         addMemberModal.modal(
           "modal",
@@ -68,7 +139,7 @@ const Teams = () => {
         >
           멤버 추가
         </button>
-      </div>
+      </div> */}
       {/* 
       {addProjectModal.isModalOpen &&
         addProjectModal.modal(
