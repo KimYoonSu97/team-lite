@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { authAxios } from "../axios";
-import type { ICreateTaskDto } from "@teamlite/types";
+import type { ICreateTaskDto, ITask } from "@teamlite/types";
 
 export const getMyTaskList = async () => {
   const res = await authAxios.get("tasks");
@@ -12,7 +12,9 @@ export const getMyTaskListByProjectId = async (projectId: string) => {
   return res.data;
 };
 
-export const getAllTaskListByProjectId = async (projectId: string) => {
+export const getAllTaskListByProjectId = async (
+  projectId: string,
+): Promise<ITask[]> => {
   const res = await authAxios.get(`/tasks/${projectId}`);
   return res.data;
 };

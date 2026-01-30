@@ -11,10 +11,13 @@ const useModal = () => {
     setIsModalOpen(true);
   };
 
-  const modal = (Item: React.ReactNode) => {
+  const modal = (
+    type: "modal" | "alert" | "sideModal",
+    Item: React.ReactNode,
+  ) => {
     return createPortal(
-      <Modal onClose={closeModal} item={Item} />,
-      document.getElementById("modal")!
+      <Modal onClose={closeModal} item={Item} type={type} />,
+      document.getElementById("modal")!,
     );
   };
 

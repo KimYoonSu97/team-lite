@@ -35,6 +35,8 @@ import TeamHeader from "../../components/TeamHeader";
 import { Eclipse, Ellipsis } from "lucide-react";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
+import TaskContainer from "../../components/task/TaskContainer";
+import AddTask from "../../components/modalContent/AddTask";
 // const teamMemberList = useQuery({
 //   queryKey: ["teamDetail", teamId, "memberList"],
 //   queryFn: () => getTeamMembers(teamId!),
@@ -65,6 +67,7 @@ const Projects = () => {
       setSearchQuery({ tab: "all" });
     }
   }, [projectId, teamId]);
+  const addTaskModal = useModal();
 
   const [teamDetail, projectDetail] = useQueries({
     queries: [
@@ -84,8 +87,14 @@ const Projects = () => {
   }
 
   return (
-    <div>
+    <div className="relative">
       <TeamHeader team={teamDetail.data!}></TeamHeader>
+      {addTaskModal.isModalOpen &&
+        addTaskModal.modal(
+          "sideModal",
+          <AddTask closeModal={addTaskModal.closeModal} />,
+        )}
+      <button onClick={() => addTaskModal.openModal()}>Add Task</button>
       <CommonContainer>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
@@ -94,12 +103,17 @@ const Projects = () => {
           </div>
           <div>{projectDetail.data?.description}</div>
         </div>
-        <div>
+        <div className="flex flex-col gap-8">
           <TaskTab
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
-            allCount={projectDetail.data?.allTaskCount}
-            myCount={projectDetail.data?.myTaskCount}
+            allCount={projectDetail.data?.allTaskCount || 0}
+            myCount={projectDetail.data?.myTaskCount || 0}
+          />
+          <TaskContainer
+            projectId={projectId!}
+            teamId={teamId!}
+            tab={searchQuery.get("tab")!}
           />
         </div>
       </CommonContainer>
@@ -150,180 +164,6 @@ const TaskTab = ({
           </div>
         </button>
       ))}
-    </div>
-  );
-};
-
-const AddTaskModal = ({ closeModal }: { closeModal: () => void }) => {
-  const createTaskHookForm = useForm<ICreateTaskDto>({
-    resolver: zodResolver(createTaskSchema),
-    defaultValues: {
-      title: "",
-      content: "",
-      description: "",
-      deadLine: dayjs().add(1, "month").format("YYYY-MM-DD"),
-      priority: "3",
-      assigneeId: "",
-    },
-  });
-
-  const params = useParams();
-  const queryClient = useQueryClient();
-  const memberList = useQuery({
-    queryKey: ["teamDetail", params.teamId, "memberList"],
-    queryFn: () => getTeamMembers(params.teamId!),
-  });
-
-  const taskMutation = useMutation({
-    mutationFn: (data: ICreateTaskDto) => {
-      return createTask(params.projectId!, data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["myTaskList", params.projectId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["taskList", params.projectId],
-      });
-      alert("할일이 추가되었습니다.");
-      closeModal();
-    },
-    onError: () => {
-      alert("할일이 추가되지 않았습니다.");
-    },
-  });
-
-  const onSubmit = (data: ICreateTaskDto) => {
-    taskMutation.mutate(data);
-  };
-
-  return (
-    <div onClick={(e) => e.stopPropagation()}>
-      <form
-        className="w-[500px] bg-white rounded-[20px] p-[30px] flex flex-col gap-6 shadow-xl max-h-[90vh] overflow-y-auto"
-        onSubmit={createTaskHookForm.handleSubmit(onSubmit)}
-      >
-        <div className="flex flex-col gap-2 w-full">
-          <p className="text-h1 text-brand-primary">할일 추가</p>
-          <div className="w-full h-px bg-brand-primary" />
-        </div>
-
-        <div className="flex flex-col gap-4 w-full">
-          <div className="w-full">
-            <label className="text-body-m-bold text-text-default mb-2 block">
-              제목
-            </label>
-            <input
-              {...createTaskHookForm.register("title")}
-              placeholder="할일 제목을 입력하세요"
-              className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
-            />
-            <ErrorText
-              error={createTaskHookForm.formState.errors.title?.message}
-            />
-          </div>
-
-          <div className="w-full">
-            <label className="text-body-m-bold text-text-default mb-2 block">
-              내용
-            </label>
-            <input
-              {...createTaskHookForm.register("content")}
-              placeholder="할일 내용을 입력하세요"
-              className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub"
-            />
-            <ErrorText
-              error={createTaskHookForm.formState.errors.content?.message}
-            />
-          </div>
-
-          <div className="w-full">
-            <label className="text-body-m-bold text-text-default mb-2 block">
-              설명
-            </label>
-            <textarea
-              {...createTaskHookForm.register("description")}
-              placeholder="상세 설명을 입력하세요"
-              className="block pt-2 pb-2 w-full border-2 border-border-default rounded-lg focus:border-brand-primary focus:outline-none transition-colors duration-200 placeholder:text-text-sub min-h-[80px] resize-none px-3"
-            />
-            <ErrorText
-              error={createTaskHookForm.formState.errors.description?.message}
-            />
-          </div>
-
-          <div className="w-full">
-            <label className="text-body-m-bold text-text-default mb-2 block">
-              담당자
-            </label>
-            <select
-              {...createTaskHookForm.register("assigneeId")}
-              className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 bg-transparent"
-            >
-              <option value="">담당자를 선택하세요</option>
-              {memberList.data?.map((member: any) => {
-                return (
-                  <option key={member.id} value={member.id}>
-                    {member.nickname}
-                  </option>
-                );
-              })}
-            </select>
-            <ErrorText
-              error={createTaskHookForm.formState.errors.assigneeId?.message}
-            />
-          </div>
-
-          <div className="w-full">
-            <label className="text-body-m-bold text-text-default mb-2 block">
-              우선순위
-            </label>
-            <select
-              {...createTaskHookForm.register("priority")}
-              className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200 bg-transparent"
-            >
-              {PRIORITY_LIST.map((level) => {
-                return (
-                  <option key={level.value} value={level.value}>
-                    {level.label}
-                  </option>
-                );
-              })}
-            </select>
-            <ErrorText
-              error={createTaskHookForm.formState.errors.priority?.message}
-            />
-          </div>
-
-          <div className="w-full">
-            <label className="text-body-m-bold text-text-default mb-2 block">
-              마감일
-            </label>
-            <input
-              type="date"
-              {...createTaskHookForm.register("deadLine")}
-              className="block pt-2 pb-2 w-full border-b-2 border-border-default focus:border-brand-primary focus:outline-none transition-colors duration-200"
-            />
-            <ErrorText
-              error={createTaskHookForm.formState.errors.deadLine?.message}
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-3 justify-end">
-          <button
-            type="submit"
-            className="px-6 py-2 bg-brand-primary text-text-inverse rounded-lg hover:bg-brand-primaryHover transition-all duration-200 text-body-m-bold"
-          >
-            추가
-          </button>
-          <button
-            onClick={closeModal}
-            className="px-6 py-2 text-text-sub hover:text-text-default transition-colors duration-200 text-body-m"
-          >
-            닫기
-          </button>
-        </div>
-      </form>
     </div>
   );
 };

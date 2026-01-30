@@ -27,7 +27,7 @@ const TeamBar = ({
   };
   return (
     <>
-      {isModalOpen && modal(<AddTeamModal onClose={closeModal} />)}
+      {isModalOpen && modal("modal", <AddTeamModal onClose={closeModal} />)}
 
       <div className="w-[76px] flex flex-col gap-2 bg-brand-primary p-2 ">
         {!isOpen && (

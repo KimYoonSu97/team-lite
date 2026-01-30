@@ -5,10 +5,9 @@ import {
   type ICreateTeamDto,
   type ITeam,
 } from "@teamlite/types";
-import useModal from "../../hooks/useModal";
 import { useEffect, useState } from "react";
 import { createTeam, getMyTaskList, getTeamList } from "../../api";
-import TaskCard from "../../components/TaskCard";
+import TaskCard from "../../components/task/TaskCard";
 import TeamCard from "../../components/TeamCard";
 import InteractBox from "../../components/InteractBox";
 import { useForm } from "react-hook-form";

@@ -22,6 +22,7 @@ const PrivateNavigation = () => {
     <div className="p-4 border">
       {isModalOpen &&
         modal(
+          "modal",
           <AddProject
             onClose={closeModal}
             teamId={personalTeam.data?.id!}

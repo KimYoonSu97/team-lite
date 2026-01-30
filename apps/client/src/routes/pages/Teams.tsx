@@ -57,6 +57,7 @@ const Teams = () => {
       <div>사이드 바에서 팀을 눌렀을때 나오는 페이지</div>
       {addMemberModal.isModalOpen &&
         addMemberModal.modal(
+          "modal",
           <AddMemberModal onClose={addMemberModal.closeModal} />,
         )}
       <div className="text-h2 pt-4 pb-4 text-brand-primary w-full flex justify-center items-center gap-2">

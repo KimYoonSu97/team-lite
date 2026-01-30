@@ -1,8 +1,8 @@
 import React from "react";
 import type { ITask } from "@teamlite/types";
-import { TASK_STATUS_LIST } from "../../constants";
+import { TASK_STATUS_LIST } from "../../../constants";
 import { useMutation } from "@tanstack/react-query";
-import { patchTaskStatus } from "../../api";
+import { patchTaskStatus } from "../../../api";
 
 const StatusSelect = ({ task }: { task: ITask }) => {
   const [status, setStatus] = React.useState(task.status);
