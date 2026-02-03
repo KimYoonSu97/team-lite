@@ -1,16 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router";
 import { authAxios } from "../../api/axios";
-import useModal from "../../hooks/useModal";
 import {
   createProjectSchema,
   type ICreateProjectDto,
   type IUser,
 } from "@teamlite/types";
 import { useState } from "react";
-import { getProjectList, getTeamDetail, getTeamMembers } from "../../api";
+import {
+  getMyTaskListByTeamId,
+  getProjectList,
+  getTeamDetail,
+} from "../../api";
 import ProjectCard from "../../components/ProjectCard";
-import InteractBox from "../../components/InteractBox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import ErrorText from "../../components/ErrorText";
@@ -37,12 +39,6 @@ const projectSortControllerSelectList = [
 
 const Teams = () => {
   const { teamId } = useParams();
-
-  const addMemberModal = useModal();
-  const addProjectModal = useModal();
-  const [projectSortController, setProjectSortController] = useState(
-    projectSortControllerSelectList[0],
-  );
   const teamDetail = useQuery({
     queryKey: ["teamDetail", teamId],
     queryFn: () => getTeamDetail(teamId!),
@@ -50,6 +46,20 @@ const Teams = () => {
   const teamProjectList = useQuery({
     queryKey: ["teamDetail", teamId, "projectList"],
     queryFn: () => getProjectList(teamId!),
+  });
+
+  const newTaskList = useQuery({
+    queryKey: ["teamDetail", teamId, "taskList"],
+    queryFn: () =>
+      getMyTaskListByTeamId(teamId!, {
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      }),
+  });
+  const comingTaskList = useQuery({
+    queryKey: ["teamDetail", teamId, "taskList"],
+    queryFn: () =>
+      getMyTaskListByTeamId(teamId!, { sortBy: "duedate", sortOrder: "asc" }),
   });
 
   if (teamDetail.isLoading) {
