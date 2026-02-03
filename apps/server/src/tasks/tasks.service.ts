@@ -49,6 +49,47 @@ export class TasksService {
     return myTaskList;
   }
 
+  async findMyTasksInTeam(
+    userId: string,
+    teamId: string,
+    query: {
+      sortBy?: string;
+      sortOrder?: 'asc' | 'desc';
+      skip: number;
+      take: number;
+    },
+  ) {
+    const projectList = await this.prismaService.project.findMany({
+      where: { teamId },
+      select: { id: true },
+    });
+
+    const where = {
+      assigneeId: userId,
+      projectId: { in: projectList.map((p) => p.id) },
+    };
+
+    // 총 개수 조회
+    const total = await this.prismaService.task.count({ where });
+
+    // 데이터 조회
+    const taskList = await this.prismaService.task.findMany({
+      where,
+      include: {
+        assignee: true,
+        owner: true,
+        project: true,
+      },
+      orderBy: {
+        [query.sortBy || 'createdAt']: query.sortOrder || 'desc',
+      },
+      skip: query.skip,
+      take: query.take,
+    });
+
+    return { data: taskList, total };
+  }
+
   async findMyTasksInProject(userId: string, projectId: string) {
     const myTaskList = await this.prismaService.task.findMany({
       where: { assigneeId: userId, projectId },

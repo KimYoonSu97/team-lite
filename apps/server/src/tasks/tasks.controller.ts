@@ -8,12 +8,15 @@ import {
   Delete,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import type { CreateTaskDto } from './dto/create-task.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { plainToInstance } from 'class-transformer';
 import { TaskResponseDto } from './dto/taskResponse.dto';
+import { FindTeamTasksQueryDto } from './dto/find-team-tasks-query.dto';
+import { PaginatedResponseDto } from '../common/dto/paginated-response.dto';
 
 import type { PatchTaskStatusDto } from './dto/patch-task-status.dto';
 
@@ -86,5 +89,27 @@ export class TasksController {
     console.log(updateTaskDto);
     console.log(param.id, updateTaskDto.status);
     return this.tasksService.patchTaskStatus(param.id, updateTaskDto.status);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':teamId/tasks')
+  async findTeamTasks(
+    @Param() param: { teamId: string },
+    @Query() query: FindTeamTasksQueryDto,
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    const { data, total } = await this.tasksService.findMyTasksInTeam(
+      req.user.id,
+      param.teamId,
+      query,
+    );
+
+    const tasks = data.map((task) => {
+      return plainToInstance(TaskResponseDto, task, {
+        excludeExtraneousValues: true,
+      });
+    });
+
+    return new PaginatedResponseDto(tasks, total, query.page, query.limit);
   }
 }
