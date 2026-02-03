@@ -32,3 +32,13 @@ export const createTask = async (projectId: string, data: ICreateTaskDto) => {
     deadLine: dayjs(data.deadLine).toISOString(),
   });
 };
+
+export const getMyTaskListByTeamId = async (
+  teamId: string,
+  query: { sortBy?: string; sortOrder?: "asc" | "desc" },
+) => {
+  const res = await authAxios.get(
+    `/tasks/${teamId}/tasks?${new URLSearchParams(query).toString()}`,
+  );
+  return res.data;
+};

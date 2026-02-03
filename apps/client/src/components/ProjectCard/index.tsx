@@ -11,20 +11,16 @@ const index = ({ project }: { project: IProject }) => {
       onClick={() => navigate(`/projects/${param.teamId}/${project.id}`)}
       key={project.id}
       className={
-        "w-[250px] h-[150px] bg-bg-layer1 rounded-[20px] p-[15px] flex flex-col justify-between shrink-0"
+        "shrink-0 w-[180px] h-[120px] rounded-[20px] px-6 py-4 flex flex-col gap-6 border-line-4 border cursor-pointer justify-between bg-white"
       }
     >
-      <div className="flex flex-col gap-2">
-        <p className="text-h3 text-brand-primary">{project.title}</p>
-        <div className="w-full h-px bg-border-default" />
-        <p className="text-caption text-text-default">{project.description}</p>
-      </div>
       <div>
-        <div className="flex justify-end gap-1">
-          <StickyNote width={18} height={18} color={"#00c6d8"} />
-          <p className="text-caption text-brand-primary">할일개수</p>
-        </div>
+        <p className="typo-medium typo-base text-text-1">{project.title}</p>
       </div>
+      <p className="typo-sm typo-semibold text-brand-primary">
+        {project.allTaskCount}개{" "}
+        <span className="typo-medium text-text-4">남음</span>
+      </p>
     </div>
   );
 };

@@ -7,9 +7,7 @@ import {
 } from "@teamlite/types";
 import { useEffect, useState } from "react";
 import { createTeam, getMyTaskList, getTeamList } from "../../api";
-import TaskCard from "../../components/task/TaskCard";
-import TeamCard from "../../components/TeamCard";
-import InteractBox from "../../components/InteractBox";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ErrorText from "../../components/ErrorText";
