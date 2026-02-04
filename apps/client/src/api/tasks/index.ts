@@ -36,7 +36,7 @@ export const createTask = async (projectId: string, data: ICreateTaskDto) => {
 export const getMyTaskListByTeamId = async (
   teamId: string,
   query: { sortBy?: string; sortOrder?: "asc" | "desc" },
-) => {
+): Promise<{ data: ITask[]; meta: any }> => {
   const res = await authAxios.get(
     `/tasks/${teamId}/tasks?${new URLSearchParams(query).toString()}`,
   );
