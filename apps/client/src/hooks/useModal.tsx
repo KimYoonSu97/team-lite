@@ -14,9 +14,10 @@ const useModal = () => {
   const modal = (
     type: "modal" | "alert" | "sideModal",
     Item: React.ReactNode,
+    tint?: boolean,
   ) => {
     return createPortal(
-      <Modal onClose={closeModal} item={Item} type={type} />,
+      <Modal onClose={closeModal} item={Item} type={type} tint={tint} />,
       document.getElementById("modal")!,
     );
   };
