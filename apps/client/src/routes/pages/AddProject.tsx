@@ -2,13 +2,12 @@ import { useState } from "react";
 
 import { useParams } from "react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { addProjectMember, getTeamDetail } from "../../api";
+import { addProjectMember, createProject, getTeamDetail } from "../../api";
 import CommonContainer from "../../components/CommonContainer";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProjectSchema } from "@teamlite/types";
 import type { ICreateProjectDto, IUser } from "@teamlite/types";
 import { useForm } from "react-hook-form";
-import { authAxios } from "../../api/axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { useAuthStore } from "../../store/auth/useAuthStore";
@@ -47,9 +46,9 @@ const AddProject = () => {
       data: ICreateProjectDto;
       members: string[] | [];
     }) => {
-      const res = await authAxios.post(`/projects/${teamId}`, data);
+      const res = await createProject(teamId!, data);
       if (members.length > 0) {
-        await addProjectMember(res.data.id, members);
+        await addProjectMember(res.id, members);
       }
     },
     onSuccess: () => {
@@ -74,7 +73,7 @@ const AddProject = () => {
       <CommonContainer>
         <form
           onSubmit={createProjectHookForm.handleSubmit(onSubmit)}
-          className="flex flex-col gap-16"
+          className="flex flex-col gap-16 pt-16"
         >
           <div className="flex flex-col gap-8">
             <input

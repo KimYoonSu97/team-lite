@@ -1,4 +1,4 @@
-import type { IProject, IUser } from "@teamlite/types";
+import type { ICreateProjectDto, IProject, IUser } from "@teamlite/types";
 import { authAxios } from "../axios";
 
 export const getProjectDetail = async (
@@ -27,5 +27,21 @@ export const addProjectMember = async (
     projectId,
     members: userIds,
   });
+  return res.data;
+};
+
+export const createProject = async (
+  teamId: string,
+  data: ICreateProjectDto,
+) => {
+  const res = await authAxios.post(`/projects/${teamId}`, data);
+  return res.data;
+};
+
+export const updateProject = async (
+  projectId: string,
+  data: ICreateProjectDto,
+) => {
+  const res = await authAxios.put(`/projects/${projectId}`, data);
   return res.data;
 };
