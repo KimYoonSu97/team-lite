@@ -139,4 +139,55 @@ export class ProjectsService {
       },
     });
   }
+
+  async update(projectId: string, updateProjectDto: CreateProjectDto) {
+    return await this.prisma.project.update({
+      where: { id: projectId },
+      data: {
+        title: updateProjectDto.name,
+        description: updateProjectDto.description,
+      },
+    });
+  }
+
+  async updateMember(projectId: string, members: string[]) {
+    return await this.prisma.$transaction(async (tx) => {
+      // 현재 멤버 조회 (OWNER 제외)
+      const currentMembers = await tx.project_members.findMany({
+        where: {
+          projectId,
+          role: 'MEMBER', // OWNER는 제외
+        },
+      });
+      const currentUserIds = currentMembers.map((m) => m.userId);
+
+      // 추가할 멤버
+      const toAdd = members.filter((m) => !currentUserIds.includes(m));
+
+      // 삭제할 멤버
+      const toRemove = currentUserIds.filter((id) => !members.includes(id));
+
+      // 삭제
+      if (toRemove.length > 0) {
+        await tx.project_members.deleteMany({
+          where: {
+            projectId,
+            userId: { in: toRemove },
+            role: 'MEMBER', // OWNER는 삭제하지 않음
+          },
+        });
+      }
+      // 추가
+      if (toAdd.length > 0) {
+        await tx.project_members.createMany({
+          data: toAdd.map((userId) => ({
+            projectId,
+            userId,
+            role: 'MEMBER',
+          })),
+        });
+      }
+      return { added: toAdd.length, removed: toRemove.length };
+    });
+  }
 }

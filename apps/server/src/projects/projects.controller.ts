@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   NotFoundException,
+  Put,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import type { CreateProjectDto } from './dto/create-project.dto';
@@ -60,17 +61,6 @@ export class ProjectsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get(':projectId/member')
-  async findProjectMember(@Param('projectId') projectId: string) {
-    const res = await this.projectsService.findProjectMember(projectId);
-    return res.map((member) => {
-      return plainToInstance(UserResponseDto, member.user, {
-        excludeExtraneousValues: true,
-      });
-    });
-  }
-
-  @UseGuards(AuthGuard('jwt'))
   @Get(':projectId')
   async findOne(
     @Param('projectId') projectId: string,
@@ -88,11 +78,35 @@ export class ProjectsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post(':projectId/add-members')
+  @Get(':projectId/member')
+  async findProjectMember(@Param('projectId') projectId: string) {
+    const res = await this.projectsService.findProjectMember(projectId);
+    return res.map((member) => {
+      return plainToInstance(UserResponseDto, member.user, {
+        excludeExtraneousValues: true,
+      });
+    });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':projectId/member')
   async addMembers(@Body() addProjectMemberDto: AddProjectMemberDto) {
     const res = await this.projectsService.addMembers(
       addProjectMemberDto.projectId,
       addProjectMemberDto.members,
+    );
+    return res;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put(':projectId/member')
+  async update(
+    @Param('projectId') projectId: string,
+    @Body() updateProjectMemberDto: AddProjectMemberDto,
+  ) {
+    const res = await this.projectsService.updateMember(
+      projectId,
+      updateProjectMemberDto.members,
     );
     return res;
   }
