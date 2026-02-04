@@ -10,6 +10,7 @@ import Projects from "./pages/Projects";
 import MyProjects from "./pages/MyProjects";
 import Auth from "./pages/Auth";
 import AddProject from "./pages/AddProject";
+import EditProject from "./pages/EditProject";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,11 @@ const router = createBrowserRouter([
       { path: "/team/:teamId", element: <Teams /> },
       { path: "/team/:teamId/project/:projectId", element: <Projects /> },
       { path: "/team/:teamId/add-project", element: <AddProject /> },
+      {
+        path: "/team/:teamId/edit-project/:projectId",
+        element: <EditProject />,
+      },
+
       { path: "/projects/:teamId/:projectId", element: <Projects /> },
       { path: "/projects", element: <MyProjects /> },
     ],
