@@ -8,6 +8,7 @@ import {
 import { useAuthStore } from "../../../store/auth/useAuthStore";
 import { lazy } from "react";
 import { Omega } from "lucide-react";
+import StatusBadge from "../StatusBadge/StatusBadge";
 
 // const StatusSelect = lazy(() => import("./StatusSelect"));
 // const userId = useAuthStore((state) => state.user?.id);
@@ -17,7 +18,7 @@ const index = ({ task }: { task: ITask }) => {
   // const index = () => {
   return (
     <div className="px-8 py-6 border border-line-4 rounded-[20px] hover:shadow-xl cursor-pointer flex gap-8 justify-between bg-white">
-      <p className="truncate bg-blue-100 flex-1 typo-medium typo-base text-text-1">
+      <p className="truncate flex-1 typo-medium typo-base text-text-1">
         {task.title}
       </p>
       {/* <div className="shrink">
@@ -37,13 +38,13 @@ const index = ({ task }: { task: ITask }) => {
           <p className="truncate">{task.assignee.nickname}</p>
         </div>
         <div className="w-[83px]  flex items-center justify-center">
-          {task.status}
+          <StatusBadge status={task.status || "ACTIVE"} />
         </div>
         <div className="w-[103px]  flex items-center justify-center typo-medium typo-base text-text-2">
           {dayjs(task.duedate).format("YYYY-MM-DD")}
         </div>
-        <div className="  flex items-center justify-center typo-medium typo-base text-text-2">
-          {task.priority}
+        <div className="flex items-center justify-center typo-medium typo-base text-text-2">
+          {PRIORITY_VALUE_LIST[Number(task.priority)]}
         </div>
       </div>
     </div>

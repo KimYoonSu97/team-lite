@@ -5,48 +5,21 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  useNavigate,
   useParams,
   useSearchParams,
   type SetURLSearchParams,
 } from "react-router";
 import useModal from "../../hooks/useModal";
-import dayjs from "dayjs";
-import {
-  createTask,
-  getAllTaskListByProjectId,
-  getMyTaskListByProjectId,
-  getProjectDetail,
-  getProjectMember,
-  getTeamDetail,
-  getTeamMembers,
-} from "../../api";
-import {
-  createTaskSchema,
-  type ICreateTaskDto,
-} from "@teamlite/types/src/task";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import ErrorText from "../../components/ErrorText";
-import { PRIORITY_LIST } from "../../constants";
+import { getProjectDetail, getTeamDetail } from "../../api";
 import type { IUser } from "@teamlite/types";
-import AddProjecctMember from "../../components/modalContent/AddProjecctMember";
 import CommonContainer from "../../components/CommonContainer";
 import TeamHeader from "../../components/TeamHeader";
-import { Eclipse, Ellipsis } from "lucide-react";
+import { PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import TaskContainer from "../../components/task/TaskContainer";
 import AddTask from "../../components/modalContent/AddTask";
-// const teamMemberList = useQuery({
-//   queryKey: ["teamDetail", teamId, "memberList"],
-//   queryFn: () => getTeamMembers(teamId!),
-// });
-
-// const projectMemberList = useQuery({
-//   queryKey: ["projectDetail", projectId, "memberList"],
-//   queryFn: () => getProjectMember(projectId!),
-// });
-// const addProjectMemberModal = useModal();
 
 const taskTabList = [
   {
@@ -62,12 +35,12 @@ const taskTabList = [
 const Projects = () => {
   const { projectId, teamId } = useParams();
   const [searchQuery, setSearchQuery] = useSearchParams();
+  const navigate = useNavigate();
   useEffect(() => {
     if (searchQuery.get("tab") === null) {
       setSearchQuery({ tab: "all" });
     }
   }, [projectId, teamId]);
-  const addTaskModal = useModal();
 
   const [teamDetail, projectDetail] = useQueries({
     queries: [
@@ -87,23 +60,32 @@ const Projects = () => {
   }
 
   return (
-    <div className="relative">
-      <TeamHeader team={teamDetail.data!}></TeamHeader>
-      {addTaskModal.isModalOpen &&
-        addTaskModal.modal(
-          "sideModal",
-          <AddTask closeModal={addTaskModal.closeModal} />,
-        )}
-      <button onClick={() => addTaskModal.openModal()}>Add Task</button>
+    <>
       <CommonContainer>
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
-            <p className="typo-4xl text-text-1">{projectDetail.data?.title}</p>
-            <Ellipsis width={24} height={24} />
+        <div className="flex gap-7 flex-col mt-16">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <p className="typo-4xl text-text-1">
+                {projectDetail.data?.title}
+              </p>
+              <div
+                className="cursor-pointer"
+                onClick={() => {
+                  navigate(`/team/${teamId}/edit-project/${projectId}`);
+                }}
+              >
+                <PencilLine width={24} height={24} />
+              </div>
+            </div>
+            <div>{projectDetail.data?.description}</div>
           </div>
-          <div>{projectDetail.data?.description}</div>
+          <div className="flex gap-4">
+            {projectDetail.data?.projectMembers.map((member) => {
+              return <Member key={member.id} member={member} />;
+            })}
+          </div>
         </div>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 mt-16">
           <TaskTab
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -117,7 +99,7 @@ const Projects = () => {
           />
         </div>
       </CommonContainer>
-    </div>
+    </>
   );
 };
 
@@ -134,36 +116,79 @@ const TaskTab = ({
   allCount: number;
   myCount: number;
 }) => {
+  const addTaskModal = useModal();
+
   return (
-    <div className={"flex gap-4 text-text-1"}>
-      {taskTabList.map((item) => (
-        <button
-          key={item.value}
-          onClick={() => {
-            setSearchQuery({ tab: item.value });
-          }}
-          className={clsx(
-            "pb-3 px-1 border-b-2 typo-2xl",
-            searchQuery.get("tab") === item.value
-              ? " border-zinc-600 text-text-1"
-              : " border-white text-text-4",
-          )}
-        >
-          <div className={"flex gap-2 items-center"}>
-            <p>{item.lable}</p>
-            <p
-              className={clsx(
-                "typo-base px-2 py-1 rounded-[50px]",
-                searchQuery.get("tab") === item.value
-                  ? "text-white bg-zinc-600"
-                  : "text-text-4 bg-zinc-200",
-              )}
-            >
-              {item.value === "all" ? allCount : myCount}
-            </p>
+    <div className="flex justify-between">
+      {/* {true && */}
+      {addTaskModal.isModalOpen &&
+        addTaskModal.modal(
+          "sideModal",
+          <AddTask closeModal={addTaskModal.closeModal} />,
+          false,
+        )}
+      <div className={"flex gap-4 text-text-1"}>
+        {taskTabList.map((item) => (
+          <button
+            key={item.value}
+            onClick={() => {
+              setSearchQuery({ tab: item.value });
+            }}
+            className={clsx(
+              "pb-3 px-1 border-b-2 typo-2xl",
+              searchQuery.get("tab") === item.value
+                ? " border-zinc-600 text-text-1"
+                : " border-white text-text-4",
+            )}
+          >
+            <div className={"flex gap-2 items-center"}>
+              <p>{item.lable}</p>
+              <p
+                className={clsx(
+                  "typo-base px-2 py-1 rounded-[50px]",
+                  searchQuery.get("tab") === item.value
+                    ? "text-white bg-zinc-600"
+                    : "text-text-4 bg-zinc-200",
+                )}
+              >
+                {item.value === "all" ? allCount : myCount}
+              </p>
+            </div>
+          </button>
+        ))}
+      </div>
+      <button onClick={() => addTaskModal.openModal()}>할일 추가하기</button>
+    </div>
+  );
+};
+
+const Member = ({ member }: { member: IUser }) => {
+  const [isHover, setIsHover] = useState(false);
+  return (
+    <div
+      className="w-[56px] flex flex-col gap-2 items-center relative "
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+    >
+      {member.profileImage ? (
+        <img
+          src={member.profileImage}
+          alt={`${member.nickname}의 프로필`}
+          className="w-14 h-14 rounded-[20px]"
+        />
+      ) : (
+        <div className="w-6 h-6 rounded-[4px] bg-bg-1 "></div>
+      )}
+      <div className="w-full">
+        <p className="truncate text-center">{member.nickname}</p>
+      </div>
+      {isHover && (
+        <div className="absolute top-full z-30 bg-text-1 text-white px-3 py-2 rounded-[4px] whitespace-nowrap">
+          <div>
+            <p>{member.nickname}</p>
           </div>
-        </button>
-      ))}
+        </div>
+      )}
     </div>
   );
 };

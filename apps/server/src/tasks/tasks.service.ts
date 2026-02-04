@@ -16,6 +16,7 @@ export class TasksService {
         ownerId,
         assigneeId: createTaskDto.assigneeId,
         title: createTaskDto.title,
+        status: createTaskDto.status,
         content: createTaskDto.content,
         description: createTaskDto.description,
         duedate: new Date(createTaskDto.deadLine),

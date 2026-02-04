@@ -1,22 +1,39 @@
+import { useQuery } from "@tanstack/react-query";
 import type { ITeam, IUser } from "@teamlite/types";
 import clsx from "clsx";
 import { ChevronDown, Ellipsis, Link2, Star } from "lucide-react";
+import { useParams } from "react-router";
+import { getTeamDetail } from "../api";
 
-const TeamHeader = ({ team }: { team: ITeam }) => {
+/**
+ * 팀헤더
+ *
+ */
+const TeamHeader = () => {
+  const { teamId } = useParams();
+  const teamDetail = useQuery({
+    queryKey: ["teamDetail", teamId],
+    queryFn: () => getTeamDetail(teamId!),
+  });
+  if (teamDetail.isLoading) return null;
   return (
     <div className="px-8 py-5 flex justify-between items-center">
       <div className="flex gap-2 items-center">
-        <p className="typo-2xl typo-medium text-text-1">{team.name}</p>
+        <p className="typo-2xl typo-medium text-text-1">
+          {teamDetail.data?.name}
+        </p>
         <ChevronDown width={24} height={24} className="text-text-1" />
       </div>
       <div className="flex gap-2 text-text-1">
-        {team.teamType === "GROUP" && (
+        {teamDetail.data?.teamType === "GROUP" && (
           <>
             <button className="rounded-[4px] border border-line-3 p-1 flex justify-center items-center">
               <div className="flex gap-2 justify-center items-center">
-                <TeamMemberProfileList members={team.teamMembers.slice(0, 3)} />
+                <TeamMemberProfileList
+                  members={teamDetail.data?.teamMembers.slice(0, 3)}
+                />
                 <p className="typo-regular typo-sm ">
-                  {team.teamMembers.length}
+                  {teamDetail.data?.teamMembers.length}
                 </p>
               </div>
             </button>
