@@ -6,7 +6,12 @@ import {
 } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { getProjectDetail, getTeamDetail, updateProject } from "../../api";
+import {
+  getProjectDetail,
+  getTeamDetail,
+  updateProject,
+  updateProjectMember,
+} from "../../api";
 import CommonContainer from "../../components/CommonContainer";
 import InputRow from "../../components/input/InputRow";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -70,7 +75,9 @@ const EditProject = () => {
       data: ICreateProjectDto;
       members: string[];
     }) => {
-      return await updateProject(projectId!, data);
+      const res = await updateProject(projectId!, data);
+      await updateProjectMember(projectId!, members);
+      return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["projectDetail", projectId] });
