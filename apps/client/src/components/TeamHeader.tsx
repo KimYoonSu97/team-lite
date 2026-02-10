@@ -15,12 +15,12 @@ import EditTeamMember from "./modalContent/EditTeamMember";
  */
 const TeamHeader = () => {
   const { teamId } = useParams();
+  const teamMemberModal = useModal();
   const teamDetail = useQuery({
     queryKey: ["teamDetail", teamId],
     queryFn: () => getTeamDetail(teamId!),
   });
   if (teamDetail.isLoading) return null;
-  const teamMemberModal = useModal();
 
   return (
     <div className="px-7 py-4 flex justify-between items-center">
