@@ -100,7 +100,7 @@ export class ProjectsController {
 
   @UseGuards(AuthGuard('jwt'))
   @Put(':projectId/member')
-  async update(
+  async updateMembers(
     @Param('projectId') projectId: string,
     @Body() updateProjectMemberDto: AddProjectMemberDto,
   ) {
@@ -118,6 +118,16 @@ export class ProjectsController {
     @Param('userId') userId: string,
   ) {
     const res = await this.projectsService.deleteMember(projectId, userId);
+    return res;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put(':projectId')
+  async update(
+    @Param('projectId') projectId: string,
+    @Body() updateProjectDto: CreateProjectDto,
+  ) {
+    const res = await this.projectsService.update(projectId, updateProjectDto);
     return res;
   }
 }
