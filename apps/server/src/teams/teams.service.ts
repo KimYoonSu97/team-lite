@@ -94,4 +94,15 @@ export class TeamsService {
       },
     });
   }
+
+  async updateTeam(teamId: string, updateTeamDto: CreateTeamDto) {
+    const updatedTeam = await this.prisma.team.update({
+      where: { id: teamId },
+      data: {
+        name: updateTeamDto.name,
+        description: updateTeamDto.description,
+      },
+    });
+    return updatedTeam;
+  }
 }

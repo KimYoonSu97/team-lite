@@ -98,6 +98,16 @@ export class TeamsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Patch(':teamId')
+  async update(
+    @Param('teamId') teamId: string,
+    @Body() updateTeamDto: CreateTeamDto,
+  ) {
+    const res = await this.teamsService.updateTeam(teamId, updateTeamDto);
+    return res;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get(':teamId/members')
   async findTeamMembers(@Param('teamId') teamId: string) {
     const res = await this.teamsService.findMembers(teamId);
