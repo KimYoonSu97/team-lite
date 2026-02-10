@@ -33,23 +33,50 @@ export class ProjectsService {
 
   // 프로젝트 찾기
   async findAll(teamId: string, userId: string) {
-    const projects = await this.prisma.project.findMany({
-      where: { teamId },
-      include: {
-        team: true,
-        owner: true,
-        projectMembers: true,
-      },
-    });
+    return await this.prisma.$transaction(async (tx) => {
+      const projects = await tx.project.findMany({
+        where: { teamId },
+        include: {
+          team: true,
+          owner: true,
+          projectMembers: true,
+        },
+      });
 
-    const projectMembers = await this.prisma.project_members.findMany({
-      where: {
-        userId,
-      },
+      const projectMembers = await tx.project_members.findMany({
+        where: {
+          userId,
+        },
+      });
+
+      const myProjects = projects.filter((project) =>
+        projectMembers.some((member) => member.projectId === project.id),
+      );
+
+      const tasks = await tx.task.groupBy({
+        by: ['projectId'],
+        where: {
+          projectId: {
+            in: myProjects.map((project) => project.id),
+          },
+          status: {
+            notIn: ['CLOSED', 'COMPLETED'],
+          },
+        },
+
+        _count: {
+          id: true,
+        },
+      });
+
+      return myProjects.map((project) => {
+        return {
+          ...project,
+          allTaskCount:
+            tasks.find((task) => task.projectId === project.id)?._count.id || 0,
+        };
+      });
     });
-    return projects.filter((project) =>
-      projectMembers.some((member) => member.projectId === project.id),
-    );
   }
 
   async findProjectMember(projectId: string) {
