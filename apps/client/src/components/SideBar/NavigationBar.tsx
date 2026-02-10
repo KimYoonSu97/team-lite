@@ -46,7 +46,7 @@ const NavigationBar = ({ toggle }: { toggle: () => void }) => {
           <NavigationSection personalTeam={personalTeam.data!} />
         )}
 
-        <BookmarkSection />
+        {/* <BookmarkSection /> */}
         {!personalTeam.isLoading && !personalTeam.isError && (
           <PersonalSection personalTeam={personalTeam.data!} />
         )}
@@ -118,7 +118,7 @@ const NavigationSection = ({ personalTeam }: { personalTeam: ITeam }) => {
             if (menu.id === "dashboard") {
               navigate(menu.path(teamId!));
             } else {
-              alert("준비중임ㅋ");
+              alert("준비중입니다.");
             }
           }}
           key={`menu-${index}`}
@@ -185,7 +185,7 @@ const SectionContainer = ({
 const BookmarkSection = () => {
   return (
     <SectionContainer title={"bookmark"}>
-      <NavigatorListItem title={"준비중임ㅋ"} />
+      <NavigatorListItem title={"준비중입니다."} />
     </SectionContainer>
   );
 };

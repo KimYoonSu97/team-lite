@@ -1,4 +1,4 @@
-import { updateTaskSchema } from '@teamlite/types';
+import { createTaskSchema } from '@teamlite/types';
 import { createZodDto } from 'nestjs-zod';
 
-export class PatchTaskStatusDto extends createZodDto(updateTaskSchema) {}
+export class PatchTaskStatusDto extends createZodDto(createTaskSchema) {}

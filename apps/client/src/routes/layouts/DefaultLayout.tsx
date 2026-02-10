@@ -7,7 +7,7 @@ import TeamHeader from "../../components/TeamHeader";
 const DefaultLayout = () => {
   return (
     <div className="flex w-dvw h-dvh">
-      <div className="w-[313px] h-full ">
+      <div className="max-w-[313px] h-full ">
         <SideBar />
       </div>
       <div className="w-full">

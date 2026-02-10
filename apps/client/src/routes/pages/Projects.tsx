@@ -19,7 +19,7 @@ import { PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import TaskContainer from "../../components/task/TaskContainer";
-import AddTask from "../../components/modalContent/AddTask";
+import Task from "../../components/modalContent/Task";
 
 const taskTabList = [
   {
@@ -91,6 +91,7 @@ const Projects = () => {
             setSearchQuery={setSearchQuery}
             allCount={projectDetail.data?.allTaskCount || 0}
             myCount={projectDetail.data?.myTaskCount || 0}
+            projectId={projectId!}
           />
           <TaskContainer
             projectId={projectId!}
@@ -110,11 +111,13 @@ const TaskTab = ({
   setSearchQuery,
   allCount,
   myCount,
+  projectId,
 }: {
   searchQuery: URLSearchParams;
   setSearchQuery: SetURLSearchParams;
   allCount: number;
   myCount: number;
+  projectId: string;
 }) => {
   const addTaskModal = useModal();
 
@@ -124,7 +127,7 @@ const TaskTab = ({
       {addTaskModal.isModalOpen &&
         addTaskModal.modal(
           "sideModal",
-          <AddTask closeModal={addTaskModal.closeModal} />,
+          <Task projectId={projectId} closeModal={addTaskModal.closeModal} />,
           false,
         )}
       <div className={"flex gap-4 text-text-1"}>

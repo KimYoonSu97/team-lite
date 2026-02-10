@@ -19,17 +19,10 @@ export const getAllTaskListByProjectId = async (
   return res.data;
 };
 
-export const patchTaskStatus = async (taskId: string, status: string) => {
-  const res = await authAxios.patch(`/tasks/${taskId}/status`, {
-    status,
-  });
-  return res.data;
-};
-
 export const createTask = async (projectId: string, data: ICreateTaskDto) => {
   return authAxios.post(`/tasks/${projectId}`, {
     ...data,
-    deadLine: dayjs(data.deadLine).toISOString(),
+    dueDate: dayjs(data.dueDate).toISOString(),
   });
 };
 
@@ -41,4 +34,11 @@ export const getMyTaskListByTeamId = async (
     `/tasks/${teamId}/tasks?${new URLSearchParams(query).toString()}`,
   );
   return res.data;
+};
+
+export const updateTask = async (taskId: string, data: ICreateTaskDto) => {
+  return authAxios.patch(`/tasks/${taskId}`, {
+    ...data,
+    dueDate: dayjs(data.dueDate).toISOString(),
+  });
 };

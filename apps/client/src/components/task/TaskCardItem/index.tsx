@@ -1,7 +1,7 @@
 import type { ITask } from "@teamlite/types";
 
 import dayjs from "dayjs";
-import { getDeadlineTime } from "../../../util/dayUtil";
+import { getDueDateTime } from "../../../util/dayUtil";
 
 const index = ({ task }: { task: ITask }) => {
   return (
@@ -10,7 +10,7 @@ const index = ({ task }: { task: ITask }) => {
         <p>{task.priority}</p>
 
         <p className="typo-semibold text-[14px] text-brand-primary flex items-center">
-          D-{getDeadlineTime(task.duedate)}
+          D-{getDueDateTime(task.duedate)}
         </p>
       </div>
       <div className="flex flex-col gap-2 ">

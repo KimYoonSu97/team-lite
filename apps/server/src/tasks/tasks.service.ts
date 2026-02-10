@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { PatchTaskStatusDto } from './dto/patch-task-status.dto';
 
 @Injectable()
 export class TasksService {
@@ -19,7 +20,7 @@ export class TasksService {
         status: createTaskDto.status,
         content: createTaskDto.content,
         description: createTaskDto.description,
-        duedate: new Date(createTaskDto.deadLine),
+        duedate: new Date(createTaskDto.dueDate),
         priority: createTaskDto.priority,
       },
     });
@@ -103,10 +104,18 @@ export class TasksService {
     return myTaskList;
   }
 
-  patchTaskStatus(taskId: string, status: string) {
+  updateTask(taskId: string, updateTaskDto: PatchTaskStatusDto) {
     return this.prismaService.task.update({
       where: { id: taskId },
-      data: { status },
+      data: {
+        title: updateTaskDto.title,
+        content: updateTaskDto.content,
+        description: updateTaskDto.description,
+        duedate: new Date(updateTaskDto.dueDate),
+        priority: updateTaskDto.priority,
+        status: updateTaskDto.status,
+        assigneeId: updateTaskDto.assigneeId,
+      },
     });
   }
 }
