@@ -1,22 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router";
-import { authAxios } from "../../api/axios";
-import {
-  createProjectSchema,
-  type ICreateProjectDto,
-  type IUser,
-} from "@teamlite/types";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router";
 import {
   getMyTaskListByTeamId,
   getProjectList,
   getTeamDetail,
 } from "../../api";
 import ProjectCard from "../../components/ProjectCard";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import ErrorText from "../../components/ErrorText";
-import { useAuthStore } from "../../store/auth/useAuthStore";
 import CommonContainer from "../../components/CommonContainer";
 import TaskListItem from "../../components/task/TaskListItem";
 import TaskCardItem from "../../components/task/TaskCardItem";
