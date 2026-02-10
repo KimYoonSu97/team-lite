@@ -80,15 +80,24 @@ export class TasksController {
     });
   }
 
+  // @UseGuards(AuthGuard('jwt'))
+  // @Patch(':id/status')
+  // updateStatus(
+  //   @Param() param: { id: string },
+  //   @Body() updateTaskDto: PatchTaskStatusDto,
+  // ) {
+  //   console.log(updateTaskDto);
+  //   console.log(param.id, updateTaskDto.status);
+  //   return this.tasksService.patchTaskStatus(param.id, updateTaskDto.status);
+  // }
+
   @UseGuards(AuthGuard('jwt'))
-  @Patch(':id/status')
-  update(
+  @Patch(':id')
+  updateTask(
     @Param() param: { id: string },
     @Body() updateTaskDto: PatchTaskStatusDto,
   ) {
-    console.log(updateTaskDto);
-    console.log(param.id, updateTaskDto.status);
-    return this.tasksService.patchTaskStatus(param.id, updateTaskDto.status);
+    return this.tasksService.updateTask(param.id, updateTaskDto);
   }
 
   @UseGuards(AuthGuard('jwt'))
