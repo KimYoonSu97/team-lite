@@ -40,6 +40,7 @@ export class UsersController {
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async getUser(@Query('email') email: string) {
+    console.log(email);
     const user = await this.usersService.findOneByEmail(email);
     if (!user) {
       return [];
