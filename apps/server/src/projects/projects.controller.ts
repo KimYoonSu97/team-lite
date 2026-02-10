@@ -53,6 +53,7 @@ export class ProjectsController {
       // memo 에러처리
       throw new NotFoundException('실행할 수 없습니다.');
     }
+
     return res.map((project) => {
       return plainToInstance(ProjectResponseDto, project, {
         excludeExtraneousValues: true,
