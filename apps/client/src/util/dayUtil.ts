@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-export const getDeadlineTime = (
+export const getDueDateTime = (
   date: string | Date | dayjs.Dayjs | number | undefined,
 ) => {
   const now = dayjs();
