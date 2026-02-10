@@ -45,3 +45,14 @@ export const updateProject = async (
   const res = await authAxios.put(`/projects/${projectId}`, data);
   return res.data;
 };
+
+export const updateProjectMember = async (
+  projectId: string,
+  userIds: string[],
+) => {
+  const res = await authAxios.put(`/projects/${projectId}/member`, {
+    projectId,
+    members: userIds,
+  });
+  return res.data;
+};

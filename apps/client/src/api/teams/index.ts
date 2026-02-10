@@ -34,3 +34,20 @@ export const getPersonalTeam = async (userId: string): Promise<ITeam> => {
   const res = await authAxios(`/teams/personal/${userId}`);
   return res.data;
 };
+
+export const addTeamMembers = async (teamId: string, userIds: string[]) => {
+  const res = await authAxios.post(`/teams/add-members`, {
+    teamId,
+    members: userIds,
+  });
+  return res.data;
+};
+
+export const updateTeam = async (teamId: string, data: ICreateTeamDto) => {
+  const res = await authAxios.patch(`/teams/${teamId}`, {
+    name: data.name,
+    description: data.description,
+    members: [],
+  });
+  return res.data;
+};
