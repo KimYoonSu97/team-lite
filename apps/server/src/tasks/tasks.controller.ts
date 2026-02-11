@@ -9,6 +9,7 @@ import {
   UseGuards,
   Request,
   Query,
+  Search,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import type { CreateTaskDto } from './dto/create-task.dto';
@@ -41,7 +42,22 @@ export class TasksController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':projectId')
-  async findProjectTasks(@Param() param: { projectId: string }) {
+  async findProjectTasks(
+    @Param() param: { projectId: string },
+    @Query() query: { tab: string },
+    @Request() req: Request & { user: { id: string; email: string } },
+  ) {
+    if (query.tab === 'my') {
+      const res = await this.tasksService.findMyTasksInProject(
+        param.projectId,
+        req.user.id,
+      );
+      return res.map((task) => {
+        return plainToInstance(TaskResponseDto, task, {
+          excludeExtraneousValues: true,
+        });
+      });
+    }
     const res = await this.tasksService.findAll(param.projectId);
     return res.map((task) => {
       return plainToInstance(TaskResponseDto, task, {

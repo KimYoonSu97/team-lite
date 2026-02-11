@@ -14,8 +14,9 @@ export const getMyTaskListByProjectId = async (projectId: string) => {
 
 export const getAllTaskListByProjectId = async (
   projectId: string,
+  tab: string,
 ): Promise<ITask[]> => {
-  const res = await authAxios.get(`/tasks/${projectId}`);
+  const res = await authAxios.get(`/tasks/${projectId}?tab=${tab}`);
   return res.data;
 };
 

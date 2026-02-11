@@ -39,6 +39,18 @@ export class TasksService {
     });
   }
 
+  async findMyTasksInProject(projectId: string, userId: string) {
+    const res = await this.prismaService.task.findMany({
+      where: { projectId, assigneeId: userId },
+      include: {
+        assignee: true,
+        owner: true,
+        project: true,
+      },
+    });
+    return res;
+  }
+
   async findMyTasks(userId: string) {
     const myTaskList = await this.prismaService.task.findMany({
       where: { assigneeId: userId },
@@ -90,18 +102,6 @@ export class TasksService {
     });
 
     return { data: taskList, total };
-  }
-
-  async findMyTasksInProject(userId: string, projectId: string) {
-    const myTaskList = await this.prismaService.task.findMany({
-      where: { assigneeId: userId, projectId },
-      include: {
-        assignee: true,
-        owner: true,
-        project: true,
-      },
-    });
-    return myTaskList;
   }
 
   updateTask(taskId: string, updateTaskDto: PatchTaskStatusDto) {

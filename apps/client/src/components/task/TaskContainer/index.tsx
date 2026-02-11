@@ -2,6 +2,7 @@ import React from "react";
 import TaskListItem from "../TaskListItem";
 import { useQuery } from "@tanstack/react-query";
 import { getAllTaskListByProjectId } from "../../../api";
+import { useSearchParams } from "react-router";
 
 const index = ({
   projectId,
@@ -12,9 +13,11 @@ const index = ({
   teamId: string;
   tab: string;
 }) => {
+  const [searchParams] = useSearchParams();
   const taskList = useQuery({
-    queryKey: ["taskList", projectId],
-    queryFn: () => getAllTaskListByProjectId(projectId),
+    queryKey: ["taskList", projectId, searchParams.get("tab")],
+    queryFn: () =>
+      getAllTaskListByProjectId(projectId, searchParams.get("tab")!),
     enabled: projectId !== "",
   });
 
