@@ -95,6 +95,9 @@ const Task = ({
       queryClient.invalidateQueries({
         queryKey: ["taskList", projectId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["projectDetail", projectId],
+      });
       alert("할일이 추가되었습니다.");
       closeModal();
     },
