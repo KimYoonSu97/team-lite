@@ -16,6 +16,7 @@ const TaskLazy = lazy(() => import("../../modalContent/Task"));
 
 const index = ({ task }: { task: ITask }) => {
   const taskModal = useModal();
+  console.log(task.assignee.profileImage);
 
   return (
     <>
