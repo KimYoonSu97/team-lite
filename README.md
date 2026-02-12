@@ -1,136 +1,233 @@
-# Turborepo starter
+# 🚀 TeamLite
 
-This Turborepo starter is maintained by the Turborepo core team.
+> 소규모 팀을 위한 프로젝트 & 태스크 관리 서비스
 
-## Using this example
+## 📌 프로젝트 소개
 
-Run the following command:
+TeamLite는 팀 단위의 프로젝트 관리와 태스크 추적을 위한 풀스택 웹 애플리케이션입니다. 소셜 로그인(GitHub, Google)을 통해 빠르게 시작할 수 있으며, 팀 생성 → 프로젝트 생성 → 태스크 관리까지의 워크플로우를 제공합니다.
 
-```sh
-npx create-turbo@latest
-```
+### 주요 기능
 
-## What's inside?
+- **소셜 로그인** — GitHub / Google OAuth 2.0
+- **팀 관리** — 팀 생성, 팀원 초대(이메일 검색), 팀 정보 수정
+- **프로젝트 관리** — 프로젝트 생성/수정, 멤버 할당, 진행 태스크 수 표시
+- **태스크 관리** — 태스크 CRUD, 우선순위/상태/마감일 설정, 담당자 배정
+- **대시보드** — 팀별 최신 태스크, 마감 임박 태스크 조회 및 정렬
 
-This Turborepo includes the following packages/apps:
+---
 
-### Apps and Packages
+## 🛠 기술 스택
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+| 영역          | 기술                                              |
+| ------------- | ------------------------------------------------- |
+| **Monorepo**  | Turborepo + pnpm Workspaces                       |
+| **Frontend**  | React 19 + Vite + TypeScript                      |
+| **상태 관리** | Zustand (인증) + TanStack React Query (서버 상태) |
+| **라우팅**    | React Router v7 (`createBrowserRouter`)           |
+| **폼 & 검증** | React Hook Form + Zod                             |
+| **스타일링**  | Tailwind CSS                                      |
+| **Backend**   | NestJS + TypeScript                               |
+| **ORM**       | Prisma (PostgreSQL)                               |
+| **인증**      | Passport.js (JWT + OAuth2)                        |
+| **공유 타입** | `@teamlite/types` (Zod 스키마 기반)               |
+| **인프라**    | Docker + Docker Compose + Nginx                   |
+| **CI/CD**     | GitHub Actions → Docker Hub → EC2 배포            |
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+---
 
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 📁 프로젝트 구조
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+teamLite/
+├── apps/
+│   ├── client/          # React + Vite 프론트엔드
+│   │   └── src/
+│   │       ├── api/         # 도메인별 API 함수 (teams, tasks, projects, users)
+│   │       ├── components/  # UI 컴포넌트
+│   │       ├── hooks/       # 커스텀 훅 (useModal)
+│   │       ├── routes/      # 페이지, 레이아웃, 로더
+│   │       ├── store/       # Zustand 스토어 (auth)
+│   │       └── constants/   # 상수 (상태, 우선순위 등)
+│   │
+│   └── server/          # NestJS 백엔드
+│       └── src/
+│           ├── auth/        # 인증 (JWT, GitHub, Google 전략)
+│           ├── teams/       # 팀 CRUD
+│           ├── projects/    # 프로젝트 CRUD
+│           ├── tasks/       # 태스크 CRUD
+│           ├── users/       # 유저 관리
+│           ├── aws/         # S3 Presigned URL
+│           └── prisma/      # Prisma 서비스
+│
+├── packages/
+│   └── types/           # 공유 타입 & Zod 스키마
+│
+└── docker-compose.yml   # 컨테이너 오케스트레이션
 ```
 
-### Develop
+---
 
-To develop all apps and packages, run the following command:
+## ⚡ 시작하기
 
-```
-cd my-turborepo
+### 사전 요구 사항
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+- Node.js 18+
+- pnpm 8+
+- PostgreSQL (로컬 또는 Docker)
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+### 설치 및 실행
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+```bash
+# 의존성 설치
+pnpm install
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+# 개발 서버 실행 (프론트엔드 + 백엔드 동시)
+pnpm dev
 ```
 
-### Remote Caching
+### 환경 변수
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+`apps/server/.env` 파일을 생성하고 아래 항목을 설정해야합니다.
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+```env
+DATABASE_URL=-
+JWT_SECRET=-
+GITHUB_CLIENT_ID=-
+GITHUB_CLIENT_SECRET=-
+GOOGLE_CLIENT_ID=-
+GOOGLE_CLIENT_SECRET=-
+FRONTEND_URL=-
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+---
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## 🌿 브랜치 전략
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+| 브랜치                    | 용도                                            |
+| ------------------------- | ----------------------------------------------- |
+| `main`                    | 프로덕션 배포 브랜치                            |
+| `feat/{기능}-#{이슈번호}` | 기능 개발 브랜치 (예: `feat/dashboard-page-#7`) |
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+- 기능 개발은 이슈 번호 기반의 feature 브랜치에서 진행
+- 완료 후 `main`에 Merge
+- 커밋 메시지에 `#{이슈번호}`를 포함하여 이슈 추적
 
-## Useful Links
+---
 
-Learn more about the power of Turborepo:
+## 📝 작업 일지
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
-# team-lite
+### Phase 1 — 프로젝트 초기 설정 (2025.12.12 ~ 2025.12.16)
+
+| 날짜  | 작업 내용                                       |
+| ----- | ----------------------------------------------- |
+| 12.12 | Turborepo + pnpm 모노레포 생성 (`create-turbo`) |
+| 12.16 | NestJS 서버 초기 설정, Prisma ORM 구성          |
+
+---
+
+### Phase 2 — 백엔드 핵심 기능 (2026.01.06 ~ 2026.01.14)
+
+| 날짜  | 작업 내용                                          |
+| ----- | -------------------------------------------------- |
+| 01.06 | 유저 기능 구현 (회원가입, 로그인, 이메일 중복확인) |
+| 01.06 | 팀 기능, 프로젝트 기능, 할일 기능 구현             |
+| 01.06 | 루트 타입 패키지 (`@teamlite/types`) 설정          |
+| 01.07 | 프론트엔드 라우터 설정, 로그인 기능 구현           |
+| 01.07 | 회원가입 및 페이지별 데이터 패칭                   |
+| 01.08 | 모달 시스템 구축, 팀원 리스트 조회                 |
+| 01.08 | DTO 설정 및 `class-transformer` 적용               |
+| 01.14 | 서버 Docker 컨테이너 구성                          |
+
+---
+
+### Phase 3 — 인증 & 배포 인프라 (2026.01.14 ~ 2026.01.19)
+
+| 날짜  | 작업 내용                                                |
+| ----- | -------------------------------------------------------- |
+| 01.14 | Docker Compose 작성, EC2 서버 연결                       |
+| 01.14 | GitHub Actions CI/CD 파이프라인 구축                     |
+| 01.15 | 도메인 연결 및 Nginx 설정                                |
+| 01.16 | GitHub 소셜 로그인 적용                                  |
+| 01.17 | Zod + React Hook Form 유효성 검사 적용, 공유 스키마 정의 |
+| 01.17 | 태스크 상태 업데이트 및 클라이언트 태스크 생성 기능      |
+| 01.18 | Google OAuth 적용, 공통 레이아웃 작업                    |
+| 01.19 | 퍼스널 팀 조회 및 프로젝트 생성 기능                     |
+
+---
+
+### Phase 4 — 핵심 UI 개발 (2026.01.21 ~ 2026.02.04)
+
+**#7 — 대시보드 페이지** `feat/dashboard-page-#7`
+
+| 날짜  | 작업 내용                                       |
+| ----- | ----------------------------------------------- |
+| 01.30 | 마감일 계산 유틸리티 함수 추가                  |
+| 01.30 | Task 카드 및 리스트 아이템 컴포넌트 추가        |
+| 01.30 | ProjectCard UI 개선, Teams 페이지 대시보드 구현 |
+| 02.03 | 정렬 및 페이지네이션 공통 DTO 추가 (서버)       |
+| 02.03 | 팀별 Task 조회 API에 정렬/페이지네이션 적용     |
+| 02.10 | 프로젝트 목록에 진행 중 태스크 수 표시          |
+
+**#8 — 프로젝트 페이지** `feat/project-page-#8`
+
+| 날짜  | 작업 내용                                       |
+| ----- | ----------------------------------------------- |
+| 02.04 | 재사용 `SelectInput` + `InputRow` 컴포넌트 추가 |
+| 02.04 | 우선순위/상태 상수 업데이트, Modal tint 옵션    |
+| 02.04 | AddProject, EditProject 페이지 추가             |
+| 02.04 | Projects 페이지 UI 및 기능 개선                 |
+| 02.04 | TaskListItem 개선, `tasks.service.ts` 업데이트  |
+
+**#9 — 프로젝트 수정 페이지** `feat/project-edit-page-#9`
+
+| 날짜  | 작업 내용                               |
+| ----- | --------------------------------------- |
+| 02.04 | 프로젝트 멤버 업데이트 로직 및 API 추가 |
+| 02.04 | 프로젝트 수정 페이지 구현               |
+
+---
+
+### Phase 5 — 팀 관리 & 태스크 완성 (2026.02.10 ~ 2026.02.12)
+
+**#10 — 팀 헤더 & 관리** `feat/common-team-header-#10`
+
+| 날짜  | 작업 내용                                            |
+| ----- | ---------------------------------------------------- |
+| 02.10 | Button 컴포넌트 variant/size 옵션 추가               |
+| 02.10 | 팀 정보 수정, 프로젝트 정보 수정 API 엔드포인트 추가 |
+| 02.10 | 팀 관리 모달 (팀 편집, 팀원 초대) 구현               |
+| 02.10 | TeamHeader 팀 관리 기능 통합                         |
+| 02.10 | EditProject 멤버 업데이트 API 연동                   |
+
+**#11 — 태스크 기능 고도화** `feat/tasks-feature-#11`
+
+| 날짜  | 작업 내용                                 |
+| ----- | ----------------------------------------- |
+| 02.10 | 태스크 타입 스키마 개선                   |
+| 02.10 | 태스크 전체 정보 업데이트 API 구현 (서버) |
+| 02.10 | 태스크 생성/수정 통합 모달 컴포넌트 구현  |
+| 02.10 | TaskListItem 클릭 시 수정 모달 연동       |
+| 02.10 | TaskCardItem 유틸 함수명 변경, 모달 연동  |
+
+**버그 수정 & 정리**
+
+| 날짜  | 작업 내용                                      |
+| ----- | ---------------------------------------------- |
+| 02.11 | 프로젝트 태스크 조회 시 tab 파라미터 지원 추가 |
+| 02.11 | TaskCardItem 우선순위 표시 및 모달 연동        |
+| 02.11 | 태스크 생성 후 프로젝트 쿼리 무효화 추가       |
+| 02.11 | TaskListItem 디버깅용 console.log 제거         |
+| 02.12 | `QueryClient` 모듈 스코프로 이동 (성능 개선)   |
+
+---
+
+## 📊 프로젝트 통계
+
+| 항목                 | 수치                       |
+| -------------------- | -------------------------- |
+| 총 커밋 수           | 114+                       |
+| 개발 기간            | 2025.12.12 ~ 진행 중       |
+| Feature 브랜치       | 5개 (#7, #8, #9, #10, #11) |
+| 프론트엔드 소스 파일 | 56개                       |
+| 백엔드 소스 파일     | 47개                       |
+| 공유 타입 파일       | 8개                        |
